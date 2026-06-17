@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Trash2, Plus, ArrowUp, ArrowDown, ExternalLink, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { revalidateHome } from '@/app/actions';
 
 interface HeroImage {
   id: string;
@@ -65,6 +66,7 @@ export default function AdminHeroPage() {
 
       setNewUrl('');
       await fetchHeroes();
+      await revalidateHome();
     } catch (err: any) {
       console.error('Error adding hero image:', err);
       setErrorMsg(err.message || 'Failed to add hero image.');
@@ -117,6 +119,7 @@ export default function AdminHeroPage() {
 
       // 4. Refresh UI
       await fetchHeroes();
+      await revalidateHome();
     } catch (err: any) {
       console.error('Error deleting hero image:', err);
       setErrorMsg(err.message || 'Failed to delete hero image.');
@@ -155,6 +158,7 @@ export default function AdminHeroPage() {
       if (errorB) throw errorB;
 
       await fetchHeroes();
+      await revalidateHome();
     } catch (err: any) {
       console.error('Error reordering hero images:', err);
       setErrorMsg(err.message || 'Failed to reorder hero images.');
@@ -201,6 +205,7 @@ export default function AdminHeroPage() {
 
       console.info('[Upload Trace] Step 6: After database insert (Success)');
       await fetchHeroes();
+      await revalidateHome();
     } catch (err: any) {
       console.error('[Upload Trace] Step 5/6 (Failed): DB insert failed:', err);
       setErrorMsg(err.message || 'Failed to upload hero image.');

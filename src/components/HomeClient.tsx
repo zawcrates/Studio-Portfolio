@@ -1,13 +1,12 @@
-'use strict';
-
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Star, Heart, Calendar, Award, Compass, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Album, HeroImage, Service, Testimonial } from '@/lib/mockData';
+import HeroCarousel from '@/components/hero/HeroCarousel';
 
 interface HomeClientProps {
   heroImages: HeroImage[];
@@ -22,17 +21,7 @@ export default function HomeClient({
   services,
   testimonials,
 }: HomeClientProps) {
-  const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
   const [currentTestimonialIdx, setCurrentTestimonialIdx] = useState(0);
-
-  // Auto-play hero slider
-  useEffect(() => {
-    if (heroImages.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentHeroIdx((prev) => (prev + 1) % heroImages.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [heroImages]);
 
   const nextTestimonial = () => {
     setCurrentTestimonialIdx((prev) => (prev + 1) % testimonials.length);
@@ -44,100 +33,8 @@ export default function HomeClient({
 
   return (
     <div className="w-full">
-      {/* 1. Cinematic Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center">
-        {/* Background Slider */}
-        <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentHeroIdx}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 0.6, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
-              className="absolute inset-0 w-full h-full"
-            >
-              <Image
-                src={heroImages[currentHeroIdx]?.image_url || '/placeholder-hero.jpg'}
-                alt="Cinematic Portfolio Shot"
-                fill
-                priority
-                className="object-cover"
-                sizes="100vw"
-              />
-            </motion.div>
-          </AnimatePresence>
-          {/* Vignette Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/40 to-black/60 z-10" />
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-20 max-w-5xl mx-auto px-6 text-center flex flex-col items-center gap-6 mt-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-gold tracking-[0.3em] text-xs uppercase font-semibold"
-          >
-            Premium Photography & Cinematography
-          </motion.span>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1.0 }}
-            className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide text-white leading-tight font-light"
-          >
-            Capturing the <br />
-            <span className="text-shine italic font-normal font-serif">Poetry of Light</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1.0 }}
-            className="max-w-xl text-gray-300 font-light text-sm sm:text-base md:text-lg leading-relaxed mt-2"
-          >
-            We frame the fleeting moments, authentic emotions, and raw elegance of your lives in cinematic art.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 mt-6"
-          >
-            <Link
-              href="/portfolio"
-              className="px-8 py-3.5 rounded-full bg-gold text-black hover:bg-gold-hover transition-all duration-300 text-xs uppercase tracking-widest font-semibold flex items-center gap-2 shadow-lg hover:shadow-gold/20"
-            >
-              Explore Portfolio <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/contact"
-              className="px-8 py-3.5 rounded-full border border-white/20 text-white hover:border-gold hover:text-gold transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
-            >
-              Discuss Your Project
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Hero Slider Indicators */}
-        {heroImages.length > 1 && (
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
-            {heroImages.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentHeroIdx(idx)}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  currentHeroIdx === idx ? 'w-8 bg-gold' : 'w-2 bg-white/30'
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* 1. Curved Hero Carousel */}
+      <HeroCarousel images={heroImages} />
 
       {/* 2. Studio Introduction Section */}
       <section className="py-24 bg-background relative overflow-hidden">
