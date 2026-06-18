@@ -21,9 +21,20 @@ export async function POST(request: NextRequest) {
 
     console.info(`[Upload Trace] Step 2: After authentication check. Authenticated user: ${user?.email || 'None'}`);
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@aurastudio.in';
-    if (!user || user.email !== adminEmail) {
-      console.warn(`[Unauthorized Upload Attempt] User: ${user?.email || 'Anonymous'}`);
+    if (!user) {
+      console.warn('[Unauthorized Upload Attempt] User is anonymous.');
+      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+    }
+
+    // Verify user is registered in the admins table
+    const { data: adminData, error: adminErr } = await serverSupabase
+      .from('admins')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (adminErr || !adminData) {
+      console.warn(`[Unauthorized Upload Attempt] User: ${user.email} is not in the admins table.`);
       return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
     }
 
@@ -113,18 +124,29 @@ export async function DELETE(request: NextRequest) {
     const serverSupabase = await createServerClient();
     const { data: { user } } = await serverSupabase.auth.getUser();
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@aurastudio.in';
-    if (!user || user.email !== adminEmail) {
-      console.warn(`[Unauthorized Delete Attempt] User: ${user?.email || 'Anonymous'}`);
+    if (!user) {
+      console.warn('[Unauthorized Delete Attempt] User is anonymous.');
+      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+    }
+
+    // Verify user is registered in the admins table
+    const { data: adminData, error: adminErr } = await serverSupabase
+      .from('admins')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (adminErr || !adminData) {
+      console.warn(`[Unauthorized Delete Attempt] User: ${user.email} is not in the admins table.`);
       return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
     }
 
     // 2. Parse request query params
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get('bucket');
-    const fileName = searchParams.get('filename');
+    const fileNames = searchParams.getAll('filename');
 
-    if (!bucket || !fileName) {
+    if (!bucket || fileNames.length === 0) {
       return NextResponse.json({ error: 'Missing bucket or filename parameters.' }, { status: 400 });
     }
 
@@ -145,17 +167,14 @@ export async function DELETE(request: NextRequest) {
       auth: { persistSession: false }
     });
 
-    console.info(`[Delete Trace] Deleting file from storage: ${bucket}/${fileName}`);
+    console.info(`[Delete Trace] Deleting files from storage: ${bucket}/${fileNames.join(', ')}`);
 
-    const filename = fileName;
-    const filePath = filename;
-
-    // 4. Delete file from storage
+    // 4. Delete files from storage
     const { data: result, error } = await adminSupabase.storage
       .from(bucket)
-      .remove([filename]);
+      .remove(fileNames);
 
-    console.log("Deleting:", filePath);
+    console.log("Deleting:", fileNames);
     console.log("Delete Result:", result);
     console.log("Delete Error:", error);
 
@@ -164,7 +183,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to delete file from storage.', details: error }, { status: 500 });
     }
 
-    console.info(`[Delete Success] File deleted successfully from ${bucket}/${filename}`);
+    console.info(`[Delete Success] Files deleted successfully from ${bucket}/${fileNames.join(', ')}`);
     return NextResponse.json({ success: true, deleted: result }, { status: 200 });
 
   } catch (err) {

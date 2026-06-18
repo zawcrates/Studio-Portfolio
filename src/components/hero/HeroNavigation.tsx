@@ -15,7 +15,7 @@ export function HeroNavigation({ onPrev, onNext, isAnimating }: HeroNavigationPr
         onClick={onPrev}
         disabled={isAnimating}
         aria-label="Previous Slide"
-        className="pointer-events-auto w-12 h-12 rounded-full border border-[#E5E7EB] bg-white text-[#111111] 
+        className="pointer-events-auto w-12 h-12 rounded-full border border-[#E5E7EB] bg-background text-[#111111] 
                    hover:text-[#C6A969] hover:border-[#C6A969] hover:scale-105 shadow-md flex items-center justify-center 
                    transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#C6A969]/50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
@@ -27,7 +27,7 @@ export function HeroNavigation({ onPrev, onNext, isAnimating }: HeroNavigationPr
         onClick={onNext}
         disabled={isAnimating}
         aria-label="Next Slide"
-        className="pointer-events-auto w-12 h-12 rounded-full border border-[#E5E7EB] bg-white text-[#111111] 
+        className="pointer-events-auto w-12 h-12 rounded-full border border-[#E5E7EB] bg-background text-[#111111] 
                    hover:text-[#C6A969] hover:border-[#C6A969] hover:scale-105 shadow-md flex items-center justify-center 
                    transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#C6A969]/50 disabled:opacity-50 disabled:cursor-not-allowed"
       >

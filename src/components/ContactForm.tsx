@@ -120,19 +120,19 @@ ${data.message}`;
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass p-8 sm:p-12 rounded-3xl border border-gold/30 text-center flex flex-col items-center gap-6 max-w-lg mx-auto shadow-2xl shadow-gold/5"
+        className="glass p-8 sm:p-12 rounded-3xl border border-accent/30 text-center flex flex-col items-center gap-6 max-w-lg mx-auto shadow-2xl shadow-gold/5"
       >
-        <CheckCircle2 className="w-16 h-16 text-gold animate-bounce" />
-        <h2 className="font-serif text-3xl text-white font-light">Inquiry Received!</h2>
+        <CheckCircle2 className="w-16 h-16 text-accent animate-bounce" />
+        <h2 className="font-serif text-3xl text-foreground font-light">Inquiry Received!</h2>
         <p className="text-gray-300 font-light text-sm sm:text-base leading-relaxed">
           Thank you for reaching out to Aura Studio. We have successfully logged your session details. 
         </p>
-        <p className="text-gold font-light text-xs uppercase tracking-widest mt-2">
+        <p className="text-accent font-light text-xs uppercase tracking-widest mt-2">
           Redirecting to WhatsApp to start your chat...
         </p>
         <button
           onClick={() => setIsSuccess(false)}
-          className="mt-4 text-xs font-semibold text-gray-400 hover:text-white uppercase tracking-widest underline underline-offset-4 transition-colors"
+          className="mt-4 text-xs font-semibold text-gray-400 hover:text-foreground uppercase tracking-widest underline underline-offset-4 transition-colors"
         >
           Submit another inquiry
         </button>
@@ -145,10 +145,10 @@ ${data.message}`;
       {/* Contact Details Panel */}
       <div className="lg:col-span-5 flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <span className="text-gold tracking-[0.2em] text-xs uppercase font-semibold">
+          <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
             Get in touch
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-white font-light">
+          <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
             Let's Talk About Your Shoot
           </h2>
           <p className="text-gray-400 font-light leading-relaxed text-sm sm:text-base">
@@ -156,36 +156,36 @@ ${data.message}`;
           </p>
         </div>
 
-        <ul className="flex flex-col gap-6 font-light text-sm text-gray-300 border-t border-white/5 pt-8">
+        <ul className="flex flex-col gap-6 font-light text-sm text-gray-300 border-t border-border/5 pt-8">
           <li className="flex gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-serif text-white font-medium text-base">Studio Address</p>
+              <p className="font-serif text-foreground font-medium text-base">Studio Address</p>
               <p className="text-gray-400 mt-1 text-xs sm:text-sm">
                 12, Khader Nawaz Khan Rd, Nungambakkam, Chennai, Tamil Nadu 600006
               </p>
             </div>
           </li>
           <li className="flex gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
               <Phone className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-serif text-white font-medium text-base">Phone Inquiries</p>
-              <a href="tel:+919876543210" className="text-gray-400 hover:text-gold mt-1 inline-block text-xs sm:text-sm">
+              <p className="font-serif text-foreground font-medium text-base">Phone Inquiries</p>
+              <a href="tel:+919876543210" className="text-gray-400 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
                 +91 98765 43210
               </a>
             </div>
           </li>
           <li className="flex gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
               <Mail className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-serif text-white font-medium text-base">Direct Email</p>
-              <a href="mailto:hello@aurastudio.in" className="text-gray-400 hover:text-gold mt-1 inline-block text-xs sm:text-sm">
+              <p className="font-serif text-foreground font-medium text-base">Direct Email</p>
+              <a href="mailto:hello@aurastudio.in" className="text-gray-400 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
                 hello@aurastudio.in
               </a>
             </div>
@@ -193,15 +193,15 @@ ${data.message}`;
         </ul>
 
         {/* Highlight Note */}
-        <div className="glass p-6 rounded-2xl border border-white/5 text-xs text-gray-400 leading-relaxed font-light">
-          <p className="font-semibold text-white uppercase tracking-wider mb-1">Lead Flow Notice:</p>
+        <div className="glass p-6 rounded-2xl border border-border/5 text-xs text-gray-400 leading-relaxed font-light">
+          <p className="font-semibold text-foreground uppercase tracking-wider mb-1">Lead Flow Notice:</p>
           Submitting this form logs your inquiry in our database and opens WhatsApp Web/Mobile with all details pre-formatted. This ensures instant booking priority.
         </div>
       </div>
 
       {/* Form Form */}
       <div className="lg:col-span-7">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 glass p-8 sm:p-10 rounded-3xl border border-white/5 shadow-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 glass p-8 sm:p-10 rounded-3xl border border-border/5 shadow-2xl">
           {errorMessage && (
             <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-200 rounded-xl text-xs">
               {errorMessage}
@@ -218,7 +218,7 @@ ${data.message}`;
               type="text"
               placeholder="e.g. Priya Sharma"
               {...register('name')}
-              className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors placeholder:text-gray-600"
+              className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
             />
             {errors.name && (
               <span className="text-xs text-red-400 font-light mt-0.5">{errors.name.message}</span>
@@ -237,7 +237,7 @@ ${data.message}`;
                 type="tel"
                 placeholder="e.g. 9876543210"
                 {...register('phone')}
-                className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors placeholder:text-gray-600"
+                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
               />
               {errors.phone && (
                 <span className="text-xs text-red-400 font-light mt-0.5">{errors.phone.message}</span>
@@ -254,7 +254,7 @@ ${data.message}`;
                 type="email"
                 placeholder="e.g. priya@gmail.com"
                 {...register('email')}
-                className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors placeholder:text-gray-600"
+                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
               />
               {errors.email && (
                 <span className="text-xs text-red-400 font-light mt-0.5">{errors.email.message}</span>
@@ -272,11 +272,11 @@ ${data.message}`;
               <select
                 id="event_type"
                 {...register('event_type')}
-                className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors appearance-none cursor-pointer"
+                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors appearance-none cursor-pointer"
               >
                 <option value="" disabled className="text-gray-700">Select Event</option>
                 {EVENT_TYPES.map((type) => (
-                  <option key={type} value={type} className="bg-card text-white">
+                  <option key={type} value={type} className="bg-card text-foreground">
                     {type}
                   </option>
                 ))}
@@ -295,7 +295,7 @@ ${data.message}`;
                 id="event_date"
                 type="date"
                 {...register('event_date')}
-                className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors cursor-pointer"
+                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors cursor-pointer"
               />
               {errors.event_date && (
                 <span className="text-xs text-red-400 font-light mt-0.5">{errors.event_date.message}</span>
@@ -313,7 +313,7 @@ ${data.message}`;
               rows={4}
               placeholder="Tell us about your plans, locations, and styling requests..."
               {...register('message')}
-              className="px-4 py-3.5 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors resize-none placeholder:text-gray-600"
+              className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors resize-none placeholder:text-gray-600"
             />
             {errors.message && (
               <span className="text-xs text-red-400 font-light mt-0.5">{errors.message.message}</span>
@@ -324,7 +324,7 @@ ${data.message}`;
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-4 py-4 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
+            className="w-full mt-4 py-4 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
           >
             {isSubmitting ? (
               <span>Sending Inquiry...</span>

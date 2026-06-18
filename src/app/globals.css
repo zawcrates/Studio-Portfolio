@@ -1,21 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #070708;
-  --foreground: #f3f4f6;
-  --card: #121214;
-  --card-foreground: #f3f4f6;
-  --border: #1f1f23;
-  --gold: #d4af37;
-  --gold-hover: #bda02b;
+  --background: #fee9ff; /* Page background */
+  --foreground: #414538; /* Body text */
+  --walnut: #4E220F; /* Primary dark */
+  --terracotta: #4E220F; /* Accent */
+  --sage: #B0BA99; /* Secondary accent */
+  --card-bg: #FCF8EC; /* Card background */
+  --border: #9D6638; /* Borders */
+  --lavender: #5b4daa; /* Dark Lavender */
+  --gold: #9D6638; /* Map old gold to terracotta for fallback */
+  --gold-hover: #4E220F; /* Hover state */
+  --accent-hover: #692F16; /* Hover state for accent */
+
+  /* Responsive hamburger offsets */
+  --line-y-top: -5px;
+  --line-y-bottom: 5px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --line-y-top: -7px;
+    --line-y-bottom: 7px;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--terracotta);
+  --color-accent-hover: var(--accent-hover);
   --color-border: var(--border);
+  --color-walnut: var(--walnut);
+  --color-terracotta: var(--terracotta);
+  --color-sage: var(--sage);
+  --color-cardbg: var(--card-bg);
+  --color-lavender: var(--lavender);
   --color-gold: var(--gold);
   --color-gold-hover: var(--gold-hover);
   --font-serif: var(--font-cormorant);
@@ -74,3 +94,111 @@ body {
     background-position: 200% center;
   }
 }
+
+  /* ── Mobile Landscape (Low-Height Viewport) Optimization ── */
+
+  /* Override default white text to use lavender */
+  .text-foreground { color: var(--foreground); }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 1. Header / Navbar compact layout */
+  .hero-section {
+    min-height: auto !important;
+    padding-top: 6rem !important;
+  }
+  header.fixed {
+    top: 0.5rem !important;
+  }
+  header.fixed > div {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+    border-radius: 9999px !important;
+  }
+
+  /* 2. Mobile Menu Overlay vertical scrolling and compact padding */
+  .mobile-nav-overlay {
+    justify-content: flex-start !important;
+    padding-top: clamp(4.5rem, 18vh, 6.5rem) !important;
+    padding-bottom: 2rem !important;
+    overflow-y: auto !important;
+    height: 100dvh !important;
+  }
+  .mobile-nav-list {
+    gap: 0.6rem !important;
+  }
+  .mobile-nav-list a {
+    font-size: 1.25rem !important;
+    line-height: 1.5rem !important;
+  }
+  .mobile-nav-btn {
+    margin-top: 0.5rem !important;
+  }
+  .mobile-nav-btn a {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* 3. Curved Hero Overlay curve dimensions */
+  .hero-arch-top {
+    top: -38% !important;
+    width: 170% !important;
+    height: 52% !important;
+    border-radius: 50% !important;
+  }
+  .hero-arch-bottom {
+    bottom: -32% !important;
+    width: 170% !important;
+    height: 52% !important;
+    border-radius: 50% !important;
+  }
+
+  /* 4. Carousel Scroll Container Translation */
+  .hero-scroll-container {
+    transform: translateY(12px) !important;
+  }
+
+  /* 5. Carousel Cards height & aspect-ratio */
+  .hero-carousel-card {
+    height: clamp(150px, 50vh, 210px) !important;
+    width: auto !important;
+    aspect-ratio: 1.35 / 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 6. Section Vertical Spacing (excessive whitespace reduction) */
+  .home-section {
+    padding-top: clamp(2.5rem, 9vh, 3.5rem) !important;
+    padding-bottom: clamp(2.5rem, 9vh, 3.5rem) !important;
+  }
+  .page-container {
+    padding-top: clamp(4.5rem, 16vh, 6rem) !important;
+    padding-bottom: clamp(2rem, 8vh, 3.5rem) !important;
+  }
+
+  /* 7. Image Box Heights & Collages scaling */
+  .intro-collage-container,
+  .portfolio-card,
+  .portfolio-grid-card,
+  .about-story-image,
+  .about-founder-image,
+  .service-cover-image {
+    height: clamp(180px, 58vh, 260px) !important;
+  }
+
+  /* 8. Margin adjustments for layout elements */
+  .mb-28, .mb-20, .mb-16 {
+    margin-bottom: clamp(1.5rem, 6vh, 3rem) !important;
+  }
+
+  /* 9. Heading Typography scaling */
+  h1 {
+    font-size: clamp(1.8rem, 8vh, 2.6rem) !important;
+    line-height: 1.15 !important;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 6vh, 2rem) !important;
+    line-height: 1.2 !important;
+  }
+}
+

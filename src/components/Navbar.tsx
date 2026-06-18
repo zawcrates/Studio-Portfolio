@@ -4,164 +4,306 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_LINKS = [
-  { name: 'Home', href: '/' },
-  { name: 'Portfolio', href: '/portfolio' },
-  { name: 'Services', href: '/services' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'home', href: '/' },
+  { name: 'portfolio', href: '/portfolio' },
+  { name: 'services', href: '/services' },
+  { name: 'about', href: '/about' },
+  { name: 'contact', href: '/contact' },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // Close menu on route changes
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu on page change
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
+    setIsOpen(false);
   }, [pathname]);
 
-  // Prevent background scrolling when mobile menu is open
+  // Handle body scroll locking
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     };
-  }, [isMobileMenuOpen]);
+  }, [isOpen]);
+
+  // Circle overlay animation variants
+  const circleVariants = {
+    closed: {
+      scale: 1,
+      opacity: 0,
+      transition: {
+        duration: 0.75,
+        delay: 0.15, // Wait for menu items to fade out first
+        ease: [0.76, 0, 0.24, 1] as any,
+      },
+    },
+    open: {
+      scale: 50, // Large scale factor to cover the entire viewport
+      opacity: 1,
+      transition: {
+        duration: 0.85,
+        ease: [0.76, 0, 0.24, 1] as any,
+      },
+    },
+  };
+
+  // Nav content overlay container variants
+  const contentVariants = {
+    closed: {
+      opacity: 0,
+      transition: {
+        duration: 0.25,
+        ease: 'easeInOut' as any,
+      },
+    },
+    open: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        ease: 'easeInOut' as any,
+      },
+    },
+  };
+
+  // Staggered list variants
+  const listVariants = {
+    closed: {
+      transition: {
+        staggerChildren: 0.04,
+        staggerDirection: -1,
+      },
+    },
+    open: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.35, // Wait for circular scale expansion to cover most of the screen
+      },
+    },
+  };
+
+  // Individual link animation variants
+  const linkVariants = {
+    closed: {
+      opacity: 0,
+      y: 40,
+      transition: {
+        duration: 0.35,
+        ease: [0.76, 0, 0.24, 1] as any,
+      },
+    },
+    open: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.65,
+        ease: [0.215, 0.61, 0.355, 1] as any, // premium cubic-out easing
+      },
+    },
+  };
+
+
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'glass py-4 shadow-lg border-b border-white/5'
-            : 'bg-transparent py-6'
-        }`}
+      {/* Brand Logo Link (z-50) */}
+      <Link
+        href="/"
+        className="fixed top-[10px] left-[10px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80"
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-xl font-serif tracking-widest text-white hover:text-gold transition-colors duration-300 group"
-          >
-            <Camera className="w-6 h-6 text-gold transition-transform duration-500 group-hover:rotate-12" />
-            <span className="font-semibold uppercase">AURA</span>
-            <span className="font-light text-gold">STUDIO</span>
-          </Link>
+        <Image
+          src="/Varnam_svg3.png"
+          alt="Varnam Invites"
+          width={180}
+          height={72}
+          className={`h-25 sm:h-30 lg:h-40 w-auto object-contain transition-all duration-500 ${
+            isOpen ? 'invert' : ''
+          }`}
+          priority
+        />
+      </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative text-sm uppercase tracking-widest font-medium transition-colors duration-300 py-1 hover:text-white ${
-                    isActive ? 'text-gold' : 'text-gray-400'
-                  }`}
-                >
-                  {link.name}
-                  {isActive && (
-                    <motion.span
-                      layoutId="activeNavIndicator"
-                      className="absolute bottom-0 left-0 right-0 h-[1px] bg-gold"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+      {/* 1. Circular Morphing Overlay Circle (z-40) */}
+      <motion.div
+        variants={circleVariants}
+        initial="closed"
+        animate={isOpen ? "open" : "closed"}
+        className="fixed -top-[45px] -right-[45px] w-[130px] h-[130px] sm:-top-[60px] sm:-right-[60px] sm:w-[170px] sm:h-[170px] lg:-top-[70px] lg:-right-[70px] lg:w-[200px] lg:h-[200px] rounded-full bg-accent z-40 pointer-events-none origin-center"
+        style={{
+          willChange: 'transform',
+        }}
+      />
 
-          {/* Desktop CTA */}
-          <div className="hidden md:block">
-            <Link
-              href="/contact"
-              className="px-6 py-2.5 rounded-full border border-gold/50 text-gold hover:bg-gold hover:text-black transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
-            >
-              Book a Session
-            </Link>
-          </div>
+      {/* 2a. First Layered Circle Outline (z-50, pointer-events-none) */}
+      <motion.div
+        animate={isOpen ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
+        className="fixed -top-[35px] -right-[55px] w-[130px] h-[130px] sm:-top-[40px] sm:-right-[75px] sm:w-[170px] sm:h-[170px] lg:-top-[50px] lg:-right-[95px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/20 pointer-events-none z-50 transition-all duration-500"
+      />
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white hover:text-gold transition-colors p-1"
-            aria-label="Toggle Menu"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </header>
+      {/* 2b. Second Layered Circle Outline (z-50, pointer-events-none) - pushed slightly more out of the screen and slightly below */}
+      <motion.div
+        animate={isOpen ? { opacity: 0, scale: 0.85 } : { opacity: 1, scale: 1 }}
+        transition={{ duration: 0.45, ease: 'easeInOut', delay: 0.03 }}
+        className="fixed -top-[25px] -right-[65px] w-[130px] h-[130px] sm:-top-[30px] sm:-right-[95px] sm:w-[170px] sm:h-[170px] lg:-top-[30px] lg:-right-[120px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/15 pointer-events-none z-50 transition-all duration-500"
+      />
 
-      {/* Mobile Navigation Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+      {/* 3. Interactive Hamburger / Close Button (z-50) */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed -top-[45px] -right-[45px] w-[130px] h-[130px] sm:-top-[60px] sm:-right-[60px] sm:w-[170px] sm:h-[170px] lg:-top-[70px] lg:-right-[70px] lg:w-[200px] lg:h-[200px] rounded-full z-50 flex items-end justify-start pb-[33px] pl-[33px] sm:pb-[35px] sm:pl-[35px] lg:pb-[50px] lg:pl-[50px] border transition-all duration-500 cursor-pointer focus:outline-none"
+        style={{
+          borderColor: isOpen ? 'rgba(254, 233, 255, 0.12)' : 'rgba(78, 34, 15, 0.1)',
+          backgroundColor: isOpen ? 'transparent' : 'rgba(78, 34, 15, 0.7)',
+          backdropFilter: isOpen ? 'none' : 'blur(12px)',
+        }}
+        aria-label="Toggle Navigation Menu"
+      >
+        <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex flex-col justify-center items-center">
+          {/* Top Line */}
+          <motion.span
+            animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: "var(--line-y-top)" }}
+            transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] as any }}
+            className="absolute w-6 sm:w-8 h-[1.5px]"
+            style={{
+              backgroundColor: 'var(--background)',
+            }}
+          />
+          {/* Middle Line */}
+          <motion.span
+            animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-lg flex flex-col justify-center px-8 md:hidden"
+            className="absolute w-6 sm:w-8 h-[1.5px]"
+            style={{
+              backgroundColor: 'var(--background)',
+            }}
+          />
+          {/* Bottom Line */}
+          <motion.span
+            animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: "var(--line-y-bottom)" }}
+            transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] as any }}
+            className="absolute w-6 sm:w-8 h-[1.5px]"
+            style={{
+              backgroundColor: 'var(--background)',
+            }}
+          />
+        </div>
+      </button>
+
+      {/* 3. Fullscreen Navigation Content (z-45) */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            variants={contentVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed inset-0 z-45 flex items-center justify-center overflow-hidden"
           >
-            <nav className="flex flex-col gap-6 text-center">
-              {NAV_LINKS.map((link, index) => {
-                const isActive = pathname === link.href;
-                return (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Link
-                      href={link.href}
-                      className={`text-2xl uppercase tracking-widest font-serif ${
-                        isActive ? 'text-gold font-semibold' : 'text-gray-300'
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: NAV_LINKS.length * 0.05 }}
-                className="mt-8"
-              >
-                <Link
-                  href="/contact"
-                  className="px-8 py-3 rounded-full bg-gold text-black hover:bg-gold-hover transition-colors text-sm uppercase tracking-widest font-semibold inline-block"
+            {/* Split Grid Layout: Left Info, Right Menu */}
+            <div className="w-full max-w-7xl mx-auto px-8 sm:px-12 md:px-20 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+              
+              {/* Left Column: Brand Details (Hidden or smaller on mobile) */}
+              <div className="hidden lg:flex lg:col-span-5 flex-col gap-10 text-background/80 font-sans border-r border-background/10 pr-16 h-full justify-center">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-background/40 font-semibold">
+                    Studio Office
+                  </span>
+                  <p className="text-sm font-light leading-relaxed">
+                    12, Khader Nawaz Khan Rd,<br />
+                    Nungambakkam, Chennai 600006
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-background/40 font-semibold">
+                    Bookings & Inquiries
+                  </span>
+                  <a href="mailto:hello@aurastudio.in" className="text-sm font-light hover:text-background transition-colors">
+                    hello@aurastudio.in
+                  </a>
+                  <a href="tel:+919876543210" className="text-sm font-light hover:text-background transition-colors">
+                    +91 98765 43210
+                  </a>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-background/40 font-semibold">
+                    Follow Our Story
+                  </span>
+                  <div className="flex gap-6 text-xs uppercase tracking-wider">
+                    <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">instagram</a>
+                    <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">pinterest</a>
+                    <a href="https://behance.net" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">behance</a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Main Links */}
+              <div className="lg:col-span-7 flex flex-col justify-center">
+                <motion.nav
+                  variants={listVariants}
+                  className="flex flex-col gap-4 sm:gap-6"
                 >
-                  Book a Session
-                </Link>
-              </motion.div>
-            </nav>
+                  {NAV_LINKS.map((link, idx) => {
+                    const isActive = pathname === link.href;
+                    return (
+                      <motion.div
+                        key={link.href}
+                        variants={linkVariants}
+                        className="overflow-hidden"
+                      >
+                        <Link
+                          href={link.href}
+                          className="group flex items-baseline select-none"
+                        >
+                          {/* Item Index */}
+                          <span className="font-sans text-xs sm:text-sm tracking-widest text-background/35 mr-4 sm:mr-6">
+                            0{idx + 1}
+                          </span>
+                          
+                          {/* Link Text */}
+                          <span className="relative font-serif font-light text-5xl sm:text-7xl lg:text-8xl tracking-tight text-background hover:italic transition-all duration-300">
+                            {link.name}
+                            
+                            {/* Dot indicator for active route */}
+                            {isActive && (
+                              <span className="absolute -right-6 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-background/60" />
+                            )}
+                          </span>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </motion.nav>
+
+                {/* Mobile Info Footer: display under nav links on small viewports */}
+                <div className="flex lg:hidden flex-wrap gap-x-8 gap-y-4 mt-16 pt-8 border-t border-background/10 text-background/60 text-[10px] sm:text-xs uppercase tracking-widest">
+                  <a href="mailto:hello@aurastudio.in" className="hover:text-background transition-colors">
+                    hello@aurastudio.in
+                  </a>
+                  <a href="tel:+919876543210" className="hover:text-background transition-colors">
+                    +91 98765 43210
+                  </a>
+                  <div className="flex gap-4 w-full mt-2">
+                    <a href="https://instagram.com" className="hover:text-background transition-colors">instagram</a>
+                    <a href="https://pinterest.com" className="hover:text-background transition-colors">pinterest</a>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

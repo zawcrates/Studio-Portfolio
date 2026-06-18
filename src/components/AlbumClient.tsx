@@ -67,12 +67,12 @@ export default function AlbumClient({ album }: AlbumClientProps) {
   });
 
   return (
-    <div className="w-full min-h-screen pt-32 pb-24 bg-background">
+    <div className="w-full min-h-screen pt-32 pb-24 bg-background page-container">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Back Button */}
         <Link
           href="/portfolio"
-          className="text-xs uppercase tracking-widest text-gray-400 hover:text-gold transition-colors duration-300 flex items-center gap-2 mb-8 group inline-flex font-semibold"
+          className="text-xs uppercase tracking-widest text-gray-400 hover:text-accent transition-colors duration-300 flex items-center gap-2 mb-8 group inline-flex font-semibold"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Back to Galleries
         </Link>
@@ -81,21 +81,21 @@ export default function AlbumClient({ album }: AlbumClientProps) {
         <div className="flex flex-col gap-6 max-w-3xl mb-16">
           <div className="flex flex-wrap items-center gap-6 text-xs text-gray-500 font-mono">
             <span className="flex items-center gap-1.5 capitalize">
-              <Tag className="w-4 h-4 text-gold" /> {album.category}
+              <Tag className="w-4 h-4 text-accent" /> {album.category}
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-gold" /> {formattedDate}
+              <Calendar className="w-4 h-4 text-accent" /> {formattedDate}
             </span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl text-white font-light leading-tight">
+          <h1 className="font-serif text-4xl sm:text-6xl text-foreground font-light leading-tight">
             {album.title}
           </h1>
 
           <p className="text-gray-300 font-light leading-relaxed text-sm sm:text-base md:text-lg">
             {album.description || 'Welcome to our client showcase gallery. Experience the moments frame-by-frame.'}
           </p>
-          <div className="h-[1px] w-20 bg-gold/45 mt-2" />
+          <div className="h-[1px] w-20 bg-accent/45 mt-2" />
         </div>
 
         {/* Gallery Grid */}
@@ -109,7 +109,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05, duration: 0.5 }}
                 onClick={() => openLightbox(index)}
-                className="relative h-[300px] sm:h-[350px] md:h-[400px] rounded-2xl overflow-hidden border border-white/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group"
+                className="relative h-[300px] sm:h-[350px] md:h-[400px] rounded-2xl overflow-hidden border border-border/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group portfolio-grid-card"
               >
                 <Image
                   src={photo.image_url}
@@ -120,7 +120,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
                 />
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="px-5 py-2 rounded-full glass border border-white/10 text-xs uppercase tracking-widest text-white font-semibold">
+                  <span className="px-5 py-2 rounded-full glass border border-border/10 text-xs uppercase tracking-widest text-foreground font-semibold">
                     Expand Image
                   </span>
                 </div>
@@ -147,7 +147,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
             {/* Close Button */}
             <button
               onClick={closeLightbox}
-              className="absolute top-6 right-6 p-2 rounded-full glass text-white hover:text-gold border border-white/10 transition-colors z-55"
+              className="absolute top-6 right-6 p-2 rounded-full glass text-foreground hover:text-accent border border-border/10 transition-colors z-55"
               aria-label="Close Lightbox"
             >
               <X className="w-6 h-6" />
@@ -158,14 +158,14 @@ export default function AlbumClient({ album }: AlbumClientProps) {
               <>
                 <button
                   onClick={navigatePrev}
-                  className="absolute left-6 p-3 rounded-full glass text-white hover:text-gold border border-white/10 transition-colors z-55"
+                  className="absolute left-6 p-3 rounded-full glass text-foreground hover:text-accent border border-border/10 transition-colors z-55"
                   aria-label="Previous Photo"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={navigateNext}
-                  className="absolute right-6 p-3 rounded-full glass text-white hover:text-gold border border-white/10 transition-colors z-55"
+                  className="absolute right-6 p-3 rounded-full glass text-foreground hover:text-accent border border-border/10 transition-colors z-55"
                   aria-label="Next Photo"
                 >
                   <ChevronRight className="w-6 h-6" />
@@ -197,7 +197,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
             </div>
 
             {/* Image Counter */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full glass text-xs text-gray-400 font-mono border border-white/5">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full glass text-xs text-gray-400 font-mono border border-border/5">
               {activePhotoIdx + 1} / {album.photos.length}
             </div>
           </motion.div>

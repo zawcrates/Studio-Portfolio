@@ -89,7 +89,7 @@ export default function AdminInquiriesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -99,22 +99,22 @@ export default function AdminInquiriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-white font-light">Client Inquiries</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-light">Client Inquiries</h1>
           <p className="text-sm text-gray-500 mt-1.5 font-light">
             Review session bookings, change inquiry statuses, and contact leads.
           </p>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex bg-[#0e0e11] p-1.5 rounded-xl border border-white/5 shrink-0 self-stretch sm:self-auto justify-center">
+        <div className="flex bg-[#0e0e11] p-1.5 rounded-xl border border-border/5 shrink-0 self-stretch sm:self-auto justify-center">
           {['all', 'New', 'Contacted', 'Closed'].map((tab) => (
             <button
               key={tab}
               onClick={() => setStatusFilter(tab)}
               className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
                 statusFilter === tab
-                  ? 'bg-gold text-black font-semibold'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-accent text-black font-semibold'
+                  : 'text-gray-400 hover:text-foreground'
               }`}
             >
               {tab === 'all' ? 'All' : tab}
@@ -142,16 +142,16 @@ export default function AdminInquiriesPage() {
             return (
               <div
                 key={inq.id}
-                className="glass p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col gap-5 relative"
+                className="glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-5 relative"
               >
                 {/* Header Information */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border/5 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                       <User className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="font-serif text-lg text-white font-light">{inq.name}</h3>
+                      <h3 className="font-serif text-lg text-foreground font-light">{inq.name}</h3>
                       <p className="text-[10px] text-gray-500 font-mono mt-0.5">
                         Received: {new Date(inq.created_at).toLocaleString('en-US', {
                           month: 'short',
@@ -179,15 +179,15 @@ export default function AdminInquiriesPage() {
                             : 'bg-green-500/10 text-green-400 border border-green-500/20'
                         }`}
                       >
-                        <option value="New" className="bg-card text-white">New</option>
-                        <option value="Contacted" className="bg-card text-white">Contacted</option>
-                        <option value="Closed" className="bg-card text-white">Closed</option>
+                        <option value="New" className="bg-card text-foreground">New</option>
+                        <option value="Contacted" className="bg-card text-foreground">Contacted</option>
+                        <option value="Closed" className="bg-card text-foreground">Closed</option>
                       </select>
                     </div>
 
                     <button
                       onClick={() => handleDeleteInquiry(inq.id)}
-                      className="p-2.5 rounded-lg border border-white/5 hover:border-red-500 hover:text-red-400 text-gray-500 transition-colors"
+                      className="p-2.5 rounded-lg border border-border/5 hover:border-red-500 hover:text-red-400 text-gray-500 transition-colors"
                       title="Delete Record"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -200,9 +200,9 @@ export default function AdminInquiriesPage() {
                   {/* Event type & date */}
                   <div className="flex flex-col gap-2">
                     <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold font-mono">Event details</span>
-                    <p className="text-white font-medium">{inq.event_type}</p>
+                    <p className="text-foreground font-medium">{inq.event_type}</p>
                     <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-1">
-                      <Calendar className="w-4 h-4 text-gold" /> {new Date(inq.event_date).toLocaleDateString('en-IN', {
+                      <Calendar className="w-4 h-4 text-accent" /> {new Date(inq.event_date).toLocaleDateString('en-IN', {
                         weekday: 'short',
                         year: 'numeric',
                         month: 'long',
@@ -214,11 +214,11 @@ export default function AdminInquiriesPage() {
                   {/* Contact Info */}
                   <div className="flex flex-col gap-2">
                     <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold font-mono">Contact Details</span>
-                    <a href={`tel:${inq.phone}`} className="text-white hover:text-gold flex items-center gap-1.5 font-medium transition-colors">
-                      <Phone className="w-4 h-4 text-gold" /> {inq.phone}
+                    <a href={`tel:${inq.phone}`} className="text-foreground hover:text-accent flex items-center gap-1.5 font-medium transition-colors">
+                      <Phone className="w-4 h-4 text-accent" /> {inq.phone}
                     </a>
-                    <a href={`mailto:${inq.email}`} className="text-xs text-gray-400 hover:text-gold flex items-center gap-1.5 mt-1 transition-colors">
-                      <Mail className="w-4 h-4 text-gold" /> {inq.email}
+                    <a href={`mailto:${inq.email}`} className="text-xs text-gray-400 hover:text-accent flex items-center gap-1.5 mt-1 transition-colors">
+                      <Mail className="w-4 h-4 text-accent" /> {inq.email}
                     </a>
                   </div>
 
@@ -229,7 +229,7 @@ export default function AdminInquiriesPage() {
                       href={waUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-colors self-start"
+                      className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-foreground font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-colors self-start"
                     >
                       <MessageSquare className="w-3.5 h-3.5" /> Follow Up WhatsApp
                     </a>
@@ -237,7 +237,7 @@ export default function AdminInquiriesPage() {
                 </div>
 
                 {/* Client Message */}
-                <div className="bg-[#0e0e11] p-5 rounded-xl border border-white/5 flex flex-col gap-1.5">
+                <div className="bg-[#0e0e11] p-5 rounded-xl border border-border/5 flex flex-col gap-1.5">
                   <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold font-mono">Client Message:</span>
                   <p className="text-xs text-gray-300 leading-relaxed font-light mt-1 whitespace-pre-wrap">
                     "{inq.message}"
@@ -247,7 +247,7 @@ export default function AdminInquiriesPage() {
             );
           })
         ) : (
-          <div className="py-16 text-center text-gray-500 font-serif font-light glass rounded-2xl border border-white/5">
+          <div className="py-16 text-center text-gray-500 font-serif font-light glass rounded-2xl border border-border/5">
             No inquiries match the current filter.
           </div>
         )}

@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
           <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">Loading Admin Portal...</p>
         </div>
       </div>
@@ -115,21 +115,21 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center items-center px-6 py-12 relative overflow-hidden">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gold/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Main Login Card */}
-      <div className="w-full max-w-md glass p-8 sm:p-10 rounded-3xl border border-white/5 shadow-2xl relative z-10 flex flex-col gap-8">
+      <div className="w-full max-w-md glass p-8 sm:p-10 rounded-3xl border border-border/5 shadow-2xl relative z-10 flex flex-col gap-8">
         {/* Branding header */}
         <div className="flex flex-col items-center gap-3 text-center">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-serif tracking-widest text-white"
+            className="flex items-center gap-2 text-xl font-serif tracking-widest text-foreground"
           >
-            <Camera className="w-6 h-6 text-gold" />
+            <Camera className="w-6 h-6 text-accent" />
             <span className="font-semibold uppercase">AURA</span>
-            <span className="font-light text-gold">STUDIO</span>
+            <span className="font-light text-accent">STUDIO</span>
           </Link>
-          <h1 className="font-serif text-2xl text-white font-light tracking-wide mt-2">
+          <h1 className="font-serif text-2xl text-foreground font-light tracking-wide mt-2">
             Administrator Access
           </h1>
           <p className="text-xs text-gray-500 font-light">
@@ -148,14 +148,14 @@ export default function AdminLoginPage() {
           {/* Email input */}
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-gold" /> Email Address
+              <Mail className="w-3.5 h-3.5 text-accent" /> Email Address
             </label>
             <input
               id="email"
               type="email"
               placeholder="admin@aurastudio.in"
               {...register('email')}
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors placeholder:text-gray-700"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-700"
             />
             {errors.email && (
               <span className="text-xs text-red-400 font-light mt-0.5">{errors.email.message}</span>
@@ -165,14 +165,14 @@ export default function AdminLoginPage() {
           {/* Password input */}
           <div className="flex flex-col gap-2">
             <label htmlFor="password" className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-gold" /> Password
+              <Lock className="w-3.5 h-3.5 text-accent" /> Password
             </label>
             <input
               id="password"
               type="password"
               placeholder="••••••••"
               {...register('password')}
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors placeholder:text-gray-700"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-700"
             />
             {errors.password && (
               <span className="text-xs text-red-400 font-light mt-0.5">{errors.password.message}</span>
@@ -183,7 +183,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-4 py-3.5 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
+            className="w-full mt-4 py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
           >
             {isSubmitting ? (
               <span>Authenticating...</span>
@@ -199,7 +199,7 @@ export default function AdminLoginPage() {
 
       <Link
         href="/"
-        className="mt-8 text-xs text-gray-500 hover:text-white uppercase tracking-widest transition-colors font-medium"
+        className="mt-8 text-xs text-gray-500 hover:text-foreground uppercase tracking-widest transition-colors font-medium"
       >
         Back to Website
       </Link>

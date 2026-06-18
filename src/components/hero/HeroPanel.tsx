@@ -63,7 +63,7 @@ export function HeroPanel({ image, styleConfig, isActive }: HeroPanelProps) {
         duration: 0.6,
         ease: 'easeInOut',
       }}
-      className="overflow-hidden bg-white"
+      className="overflow-hidden bg-background"
     >
       <div className="relative w-full h-full select-none pointer-events-none">
         <Image
@@ -92,7 +92,7 @@ export function HeroPanel({ image, styleConfig, isActive }: HeroPanelProps) {
               </p>
             )}
             {image.title && (
-              <h3 className="text-white font-serif text-2xl sm:text-3xl font-light tracking-wide leading-tight drop-shadow-sm">
+              <h3 className="text-foreground font-serif text-2xl sm:text-3xl font-light tracking-wide leading-tight drop-shadow-sm">
                 {image.title}
               </h3>
             )}

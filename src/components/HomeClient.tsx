@@ -37,41 +37,41 @@ export default function HomeClient({
       <HeroCarousel images={heroImages} />
 
       {/* 2. Studio Introduction Section */}
-      <section className="py-24 bg-background relative overflow-hidden">
+      <section className="py-24 bg-background relative overflow-hidden home-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           {/* Text Content */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <span className="text-gold tracking-[0.2em] text-xs uppercase font-semibold">
+            <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
               Behind the Lens
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl text-white font-light leading-tight">
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light leading-tight">
               We Don't Just Take Photos. <br />
-              <span className="italic text-gray-400 font-serif">We Tell Stories.</span>
+              <span className="italic text-foreground/75 font-serif">We Tell Stories.</span>
             </h2>
-            <p className="text-gray-400 font-light leading-relaxed text-base">
+            <p className="text-foreground font-light leading-relaxed text-base">
               Aura Studio was founded with a singular purpose: to elevate photography into an immersive, premium art form. Based in Chennai, we document life's milestones—from spectacular weddings to corporate visual identities—with a distinctive cinematic style.
             </p>
-            <p className="text-gray-400 font-light leading-relaxed text-base">
+            <p className="text-foreground font-light leading-relaxed text-base">
               We look for the authentic, unscripted in-between moments: the subtle squeeze of a hand, the quiet tear of a mother, the shared laughter of old friends. Our approach is unobtrusive, allowing your genuine emotions to shine through while we masterfully capture the lighting, composition, and aesthetic details.
             </p>
-            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-white/5 pt-8">
+            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-border/5 pt-8">
               <div className="flex flex-col">
-                <span className="font-serif text-3xl text-gold font-light">10+</span>
+                <span className="font-serif text-3xl text-accent font-light">10+</span>
                 <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Years Experience</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-3xl text-gold font-light">300+</span>
+                <span className="font-serif text-3xl text-accent font-light">300+</span>
                 <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Weddings Captured</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-3xl text-gold font-light">100%</span>
+                <span className="font-serif text-3xl text-accent font-light">100%</span>
                 <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Happy Clients</span>
               </div>
             </div>
           </div>
 
           {/* Intro Side Collage */}
-          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-white/5 shadow-2xl group">
+          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl group intro-collage-container">
             <Image
               src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop"
               alt="Photographer at work"
@@ -79,13 +79,13 @@ export default function HomeClient({
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 p-6 glass rounded-xl border border-white/10 flex items-center gap-4">
-              <div className="p-2.5 rounded-lg bg-gold/10 text-gold">
+            <div className="absolute bottom-6 left-6 right-6 p-6 glass rounded-xl border border-border/10 flex items-center gap-4">
+              <div className="p-2.5 rounded-lg bg-accent/10 text-accent">
                 <Award className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs text-gold uppercase tracking-widest font-semibold">Award Winning</p>
-                <p className="text-sm text-white font-serif mt-0.5">Top 10 Photographers in South India</p>
+                <p className="text-xs text-accent uppercase tracking-widest font-semibold">Award Winning</p>
+                <p className="text-sm text-foreground font-serif mt-0.5">Top 10 Photographers in South India</p>
               </div>
             </div>
           </div>
@@ -93,21 +93,21 @@ export default function HomeClient({
       </section>
 
       {/* 3. Featured Portfolio Section */}
-      <section className="py-24 bg-card border-y border-white/5">
+      <section className="py-24 bg-card border-y border-border/5 home-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div className="flex flex-col gap-3">
-              <span className="text-gold tracking-[0.2em] text-xs uppercase font-semibold">
+              <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
                 Curated Gallery
               </span>
-              <h2 className="font-serif text-3xl sm:text-5xl text-white font-light">
+              <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light">
                 Featured Love Stories
               </h2>
             </div>
             <Link
               href="/portfolio"
-              className="text-sm uppercase tracking-widest text-gold hover:text-white transition-colors duration-300 flex items-center gap-2 group font-semibold"
+              className="text-sm uppercase tracking-widest text-accent hover:text-foreground transition-colors duration-300 flex items-center gap-2 group font-semibold"
             >
               View All Albums <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
@@ -122,7 +122,7 @@ export default function HomeClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative h-[450px] rounded-2xl overflow-hidden border border-white/5 flex flex-col justify-end p-6 shadow-xl"
+                className="group relative h-[450px] rounded-2xl overflow-hidden border border-border/5 flex flex-col justify-end p-6 shadow-xl portfolio-card"
               >
                 {/* Cover Image */}
                 <Image
@@ -134,14 +134,14 @@ export default function HomeClient({
                 />
                 {/* Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300" />
-                <div className="absolute inset-0 border border-transparent group-hover:border-gold/30 rounded-2xl transition-all duration-500 m-3 pointer-events-none" />
+                <div className="absolute inset-0 border border-transparent group-hover:border-accent/30 rounded-2xl transition-all duration-500 m-3 pointer-events-none" />
 
                 {/* Info Content */}
                 <div className="relative z-10 flex flex-col gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-semibold">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">
                     {album.category}
                   </span>
-                  <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                  <h3 className="font-serif text-xl sm:text-2xl text-foreground font-light">
                     {album.title}
                   </h3>
                   <p className="text-xs text-gray-400 font-light line-clamp-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -149,7 +149,7 @@ export default function HomeClient({
                   </p>
                   <Link
                     href={`/portfolio/${album.slug}`}
-                    className="text-xs font-semibold text-gold uppercase tracking-widest mt-2 flex items-center gap-1 hover:text-white transition-colors duration-300"
+                    className="text-xs font-semibold text-accent uppercase tracking-widest mt-2 flex items-center gap-1 hover:text-foreground transition-colors duration-300"
                   >
                     Open Album <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
@@ -161,17 +161,17 @@ export default function HomeClient({
       </section>
 
       {/* 4. Services Overview Section */}
-      <section className="py-24 bg-background">
+      <section className="py-24 bg-background home-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
           {/* Header */}
           <div className="text-center flex flex-col items-center gap-3">
-            <span className="text-gold tracking-[0.2em] text-xs uppercase font-semibold">
+            <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
               Our Expertise
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl text-white font-light">
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light">
               Crafted Services for Every Milestone
             </h2>
-            <div className="h-[1px] w-20 bg-gold/45 mt-4" />
+            <div className="h-[1px] w-20 bg-accent/45 mt-4" />
           </div>
 
           {/* Services Grid */}
@@ -183,17 +183,17 @@ export default function HomeClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="glass rounded-2xl p-8 border border-white/5 flex flex-col gap-6 justify-between group hover:border-gold/20 hover:bg-white/[0.02] transition-all duration-500"
+                className="glass rounded-2xl p-8 border border-border/5 flex flex-col gap-6 justify-between group hover:border-accent/20 hover:bg-background/[0.02] transition-all duration-500"
               >
                 <div className="flex flex-col gap-4">
                   {/* Icon Selection */}
-                  <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all duration-500">
+                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-all duration-500">
                     {index === 0 && <Heart className="w-5 h-5" />}
                     {index === 1 && <Compass className="w-5 h-5" />}
                     {index === 2 && <Calendar className="w-5 h-5" />}
                     {index === 3 && <Award className="w-5 h-5" />}
                   </div>
-                  <h3 className="font-serif text-xl text-white font-light group-hover:text-gold transition-colors duration-300">
+                  <h3 className="font-serif text-xl text-foreground font-light group-hover:text-accent transition-colors duration-300">
                     {service.title}
                   </h3>
                   <p className="text-sm text-gray-400 font-light leading-relaxed">
@@ -203,7 +203,7 @@ export default function HomeClient({
 
                 <Link
                   href={`/services#${service.slug}`}
-                  className="text-xs font-semibold text-white group-hover:text-gold uppercase tracking-widest flex items-center gap-1.5 mt-2 transition-colors duration-300"
+                  className="text-xs font-semibold text-foreground group-hover:text-accent uppercase tracking-widest flex items-center gap-1.5 mt-2 transition-colors duration-300"
                 >
                   Learn More <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -214,12 +214,12 @@ export default function HomeClient({
       </section>
 
       {/* 5. Testimonials Section */}
-      <section className="py-24 bg-card relative overflow-hidden border-t border-white/5">
+      <section className="py-24 bg-card relative overflow-hidden border-t border-border/5 home-section">
         <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8">
-          <span className="text-gold tracking-[0.2em] text-xs uppercase font-semibold">
+          <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
             Kind Words
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-white font-light">
+          <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
             Loved by Couples & Brands
           </h2>
 
@@ -240,12 +240,12 @@ export default function HomeClient({
                 {/* Star Rating */}
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+                    <Star key={i} className="w-4 h-4 fill-gold text-accent" />
                   ))}
                 </div>
 
                 <div className="flex items-center gap-3.5 mt-2">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gold/30">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-accent/30">
                     <Image
                       src={testimonials[currentTestimonialIdx]?.image || '/placeholder-profile.jpg'}
                       alt={testimonials[currentTestimonialIdx]?.name}
@@ -254,7 +254,7 @@ export default function HomeClient({
                     />
                   </div>
                   <div className="text-left">
-                    <h4 className="text-sm font-semibold text-white font-serif tracking-wide">
+                    <h4 className="text-sm font-semibold text-foreground font-serif tracking-wide">
                       {testimonials[currentTestimonialIdx]?.name}
                     </h4>
                     <p className="text-xs text-gray-500 mt-0.5 font-light">
@@ -271,14 +271,14 @@ export default function HomeClient({
             <div className="flex gap-4 mt-4">
               <button
                 onClick={prevTestimonial}
-                className="p-2.5 rounded-full border border-white/10 hover:border-gold hover:text-gold text-gray-400 transition-colors"
+                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-gray-400 transition-colors"
                 aria-label="Previous Testimonial"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={nextTestimonial}
-                className="p-2.5 rounded-full border border-white/10 hover:border-gold hover:text-gold text-gray-400 transition-colors"
+                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-gray-400 transition-colors"
                 aria-label="Next Testimonial"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -289,12 +289,12 @@ export default function HomeClient({
       </section>
 
       {/* 6. Contact CTA Section */}
-      <section className="py-28 bg-background relative overflow-hidden">
+      <section className="py-28 bg-background relative overflow-hidden home-section">
         {/* Background Radial Light */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gold/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8 relative z-10">
-          <h2 className="font-serif text-4xl sm:text-6xl text-white font-light leading-tight">
+          <h2 className="font-serif text-4xl sm:text-6xl text-foreground font-light leading-tight">
             Let's Co-create Something <br />
             <span className="text-shine italic font-serif">Unforgettable</span>
           </h2>
@@ -304,7 +304,7 @@ export default function HomeClient({
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
             <Link
               href="/contact"
-              className="px-8 py-3.5 rounded-full bg-gold text-black hover:bg-gold-hover transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
+              className="px-8 py-3.5 rounded-full bg-accent text-black hover:bg-accent-hover transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
             >
               Contact the Studio
             </Link>
@@ -312,7 +312,7 @@ export default function HomeClient({
               href="https://wa.me/919876543210?text=Hi%20Aura%20Studio!%20I'm%20interested%20in%20booking%20a%20photography%20session."
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-full border border-white/10 hover:border-gold hover:text-gold transition-all duration-300 text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2"
+              className="px-8 py-3.5 rounded-full border border-border/10 hover:border-accent hover:text-accent transition-all duration-300 text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2"
             >
               Chat on WhatsApp
             </a>

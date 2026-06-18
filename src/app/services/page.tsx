@@ -14,20 +14,20 @@ export default async function ServicesPage() {
   const services = await getServices();
 
   return (
-    <div className="w-full min-h-screen pt-32 pb-24 bg-background">
+    <div className="w-full min-h-screen pt-32 pb-24 bg-background page-container">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Page Header */}
         <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
-          <span className="text-gold tracking-[0.3em] text-xs uppercase font-semibold">
+          <span className="text-accent tracking-[0.3em] text-xs uppercase font-semibold">
             Premium Packages & Creative Work
           </span>
-          <h1 className="font-serif text-4xl sm:text-6xl text-white font-light">
+          <h1 className="font-serif text-4xl sm:text-6xl text-foreground font-light">
             Our Photography Services
           </h1>
           <p className="text-gray-400 font-light leading-relaxed text-sm sm:text-base mt-2">
             Professional deliverables, bespoke art direction, and cinematic lighting tailored for your weddings, personal milestones, or business needs.
           </p>
-          <div className="h-[1px] w-20 bg-gold/45 mx-auto mt-2" />
+          <div className="h-[1px] w-20 bg-accent/45 mx-auto mt-2" />
         </div>
 
         {/* Services List */}
@@ -42,7 +42,7 @@ export default async function ServicesPage() {
               >
                 {/* Cover Image Block */}
                 <div
-                  className={`lg:col-span-5 relative h-[380px] sm:h-[450px] rounded-2xl overflow-hidden border border-white/5 shadow-2xl group ${
+                  className={`lg:col-span-5 relative h-[380px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/5 shadow-2xl group service-cover-image ${
                     isEven ? 'lg:order-1' : 'lg:order-2'
                   }`}
                 >
@@ -62,7 +62,7 @@ export default async function ServicesPage() {
                     isEven ? 'lg:order-2' : 'lg:order-1'
                   }`}
                 >
-                  <span className="text-gold text-xs uppercase tracking-widest font-semibold flex items-center gap-2">
+                  <span className="text-accent text-xs uppercase tracking-widest font-semibold flex items-center gap-2">
                     {index === 0 && <Heart className="w-4 h-4" />}
                     {index === 1 && <Sparkles className="w-4 h-4" />}
                     {index === 2 && <Video className="w-4 h-4" />}
@@ -70,7 +70,7 @@ export default async function ServicesPage() {
                     Category 0{index + 1}
                   </span>
 
-                  <h2 className="font-serif text-3xl sm:text-4xl text-white font-light">
+                  <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
                     {service.title}
                   </h2>
 
@@ -79,14 +79,14 @@ export default async function ServicesPage() {
                   </p>
 
                   {/* Included Deliverables */}
-                  <div className="flex flex-col gap-3.5 mt-2 bg-card p-6 sm:p-8 rounded-2xl border border-white/5">
-                    <p className="text-xs uppercase tracking-widest font-semibold text-white">
+                  <div className="flex flex-col gap-3.5 mt-2 bg-card p-6 sm:p-8 rounded-2xl border border-border/5">
+                    <p className="text-xs uppercase tracking-widest font-semibold text-foreground">
                       What's Included:
                     </p>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-400 font-light">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2.5">
-                          <Check className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -97,13 +97,13 @@ export default async function ServicesPage() {
                   <div className="flex flex-wrap gap-4 mt-2">
                     <Link
                       href={`/contact?event=${encodeURIComponent(service.title)}`}
-                      className="px-6 py-3 rounded-full bg-gold text-black hover:bg-gold-hover transition-colors text-xs uppercase tracking-widest font-semibold flex items-center gap-1.5 shadow-md"
+                      className="px-6 py-3 rounded-full bg-accent text-black hover:bg-accent-hover transition-colors text-xs uppercase tracking-widest font-semibold flex items-center gap-1.5 shadow-md"
                     >
                       Book this Service <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <Link
                       href={`/portfolio?category=${service.id.replace('s-', '')}s`}
-                      className="px-6 py-3 rounded-full border border-white/10 text-white hover:border-gold hover:text-gold transition-colors text-xs uppercase tracking-widest font-semibold"
+                      className="px-6 py-3 rounded-full border border-border/10 text-foreground hover:border-accent hover:text-accent transition-colors text-xs uppercase tracking-widest font-semibold"
                     >
                       View Category Portfolio
                     </Link>

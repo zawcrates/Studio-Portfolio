@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
     <div className="flex flex-col gap-10">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-3xl sm:text-4xl text-white font-light">Dashboard Overview</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-light">Dashboard Overview</h1>
         <p className="text-sm text-gray-500 mt-1.5 font-light">
           Welcome to the administration panel. Here is a summary of your studio content.
         </p>
@@ -104,10 +104,10 @@ export default function AdminDashboardPage() {
         {statCards.map((card, idx) => {
           const Icon = card.icon;
           return (
-            <div key={idx} className="glass p-6 rounded-2xl border border-white/5 flex items-center justify-between">
+            <div key={idx} className="glass p-6 rounded-2xl border border-border/5 flex items-center justify-between">
               <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">{card.title}</span>
-                <span className="text-3xl font-serif text-white font-light mt-1">{card.value}</span>
+                <span className="text-3xl font-serif text-foreground font-light mt-1">{card.value}</span>
               </div>
               <div className={`p-3.5 rounded-xl ${card.bg} ${card.color}`}>
                 <Icon className="w-5 h-5" />
@@ -120,14 +120,14 @@ export default function AdminDashboardPage() {
       {/* Grid of details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Recent Inquiries List */}
-        <div className="lg:col-span-8 glass p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col gap-6">
+        <div className="lg:col-span-8 glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-serif text-xl text-white font-light flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-gold" /> Recent Client Inquiries
+            <h2 className="font-serif text-xl text-foreground font-light flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-accent" /> Recent Client Inquiries
             </h2>
             <Link
               href="/admin/dashboard/inquiries"
-              className="text-xs uppercase tracking-wider text-gold hover:text-white transition-colors underline underline-offset-4 font-semibold"
+              className="text-xs uppercase tracking-wider text-accent hover:text-foreground transition-colors underline underline-offset-4 font-semibold"
             >
               Manage Inquiries
             </Link>
@@ -138,21 +138,21 @@ export default function AdminDashboardPage() {
               recentInquiries.map((inquiry) => (
                 <div
                   key={inquiry.id}
-                  className="p-4 rounded-xl bg-white/[0.01] hover:bg-white/[0.02] border border-white/5 transition-colors flex items-center justify-between gap-4"
+                  className="p-4 rounded-xl bg-background/[0.01] hover:bg-background/[0.02] border border-border/5 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
-                  <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5 min-w-0 w-full">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-semibold text-white font-serif">{inquiry.name}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400">
+                      <span className="text-sm font-semibold text-foreground font-serif">{inquiry.name}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-background/5 text-gray-400">
                         {inquiry.event_type}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-500 font-light truncate max-w-md">
+                    <span className="text-xs text-gray-500 font-light truncate max-w-full sm:max-w-md">
                       "{inquiry.message}"
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-end shrink-0 gap-1.5">
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center shrink-0 gap-2 sm:gap-1.5 w-full sm:w-auto border-t border-border/5 pt-3 sm:border-0 sm:pt-0">
                     <span className={`text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider font-semibold ${
                       inquiry.status === 'New'
                         ? 'bg-amber-500/10 text-amber-400'
@@ -177,22 +177,22 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Actions List */}
-        <div className="lg:col-span-4 glass p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col gap-6">
-          <h2 className="font-serif text-xl text-white font-light">Quick Actions</h2>
+        <div className="lg:col-span-4 glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-6">
+          <h2 className="font-serif text-xl text-foreground font-light">Quick Actions</h2>
           <div className="flex flex-col gap-3">
             <Link
               href="/admin/dashboard/portfolio"
-              className="w-full p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-gold hover:text-gold transition-all duration-300 text-sm flex items-center justify-between font-medium group"
+              className="w-full p-4 rounded-xl border border-border/10 bg-background/[0.02] hover:border-accent hover:text-accent transition-all duration-300 text-sm flex items-center justify-between font-medium group"
             >
               <span>Manage Albums</span>
-              <Plus className="w-4 h-4 text-gray-500 group-hover:text-gold transition-colors" />
+              <Plus className="w-4 h-4 text-gray-500 group-hover:text-accent transition-colors" />
             </Link>
             <Link
               href="/admin/dashboard/hero"
-              className="w-full p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-gold hover:text-gold transition-all duration-300 text-sm flex items-center justify-between font-medium group"
+              className="w-full p-4 rounded-xl border border-border/10 bg-background/[0.02] hover:border-accent hover:text-accent transition-all duration-300 text-sm flex items-center justify-between font-medium group"
             >
               <span>Manage Hero Images</span>
-              <Plus className="w-4 h-4 text-gray-500 group-hover:text-gold transition-colors" />
+              <Plus className="w-4 h-4 text-gray-500 group-hover:text-accent transition-colors" />
             </Link>
           </div>
         </div>
