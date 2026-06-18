@@ -17,13 +17,16 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isWarpingRef = useRef(false);
+  const isInteractingRef = useRef(false);
 
   // If images are provided, use them; otherwise, default to 7 blank slots
   const items = images && images.length > 0 ? images : Array.from({ length: 7 });
   const itemsCount = items.length;
 
-  // Render 3 copies to support seamless infinite scrolling
-  const virtualItems = [...items, ...items, ...items];
+  // Render 5 copies to support seamless infinite scrolling
+  const virtualItems = [...items, ...items, ...items, ...items, ...items];
 
   // Scroll to the center copy on mount
   useEffect(() => {
@@ -33,17 +36,17 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
         const firstChild = container.children[0] as HTMLElement;
         const itemWidth = firstChild ? firstChild.offsetWidth : 0;
         const gap = 5;
-        const loopWidth = itemWidth > 0 ? itemsCount * (itemWidth + gap) : container.scrollWidth / 3;
+        const loopWidth = itemWidth > 0 ? itemsCount * (itemWidth + gap) : container.scrollWidth / 5;
         const middleOffset = Math.floor(itemsCount / 2);
 
         if (itemWidth > 0) {
-          const targetIndex = itemsCount + middleOffset;
+          const targetIndex = 2 * itemsCount + middleOffset;
           const computedPadding = parseFloat(window.getComputedStyle(container).paddingLeft) || 0;
           const leftEdge = computedPadding + targetIndex * (itemWidth + gap);
           container.scrollLeft = leftEdge + (itemWidth / 2) - (container.clientWidth / 2);
         } else {
           const estimatedItemWidth = loopWidth / itemsCount;
-          container.scrollLeft = loopWidth + (middleOffset * estimatedItemWidth);
+          container.scrollLeft = 2 * loopWidth + (middleOffset * estimatedItemWidth);
         }
       };
 
@@ -57,24 +60,81 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
     }
   }, [itemsCount]);
 
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // Handle scroll boundaries to loop infinitely and silently
   const handleScroll = () => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container || isWarpingRef.current) return;
 
     const firstChild = container.children[0] as HTMLElement;
     const itemWidth = firstChild ? firstChild.offsetWidth : 0;
     const gap = 5;
-    const loopWidth = itemWidth > 0 ? itemsCount * (itemWidth + gap) : container.scrollWidth / 3;
+    const loopWidth = itemWidth > 0 ? itemsCount * (itemWidth + gap) : container.scrollWidth / 5;
     const scrollLeft = container.scrollLeft;
 
-    if (scrollLeft < loopWidth) {
-      // Crossed left boundary: jump to the middle copy
-      container.scrollLeft = scrollLeft + loopWidth;
-    } else if (scrollLeft >= 2 * loopWidth) {
-      // Crossed right boundary: jump to the middle copy
-      container.scrollLeft = scrollLeft - loopWidth;
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
     }
+
+    // Danger zone boundary check: if user scrolls too close to the absolute ends of the 5x loop,
+    // we warp them immediately to keep them in the scrollable range.
+    const dangerZoneLeft = 0.5 * loopWidth;
+    const dangerZoneRight = 4.5 * loopWidth;
+
+    if (scrollLeft < dangerZoneLeft) {
+      isWarpingRef.current = true;
+      container.style.scrollSnapType = 'none';
+      container.scrollLeft = scrollLeft + 2 * loopWidth;
+      requestAnimationFrame(() => {
+        container.style.scrollSnapType = 'x mandatory';
+        requestAnimationFrame(() => {
+          isWarpingRef.current = false;
+        });
+      });
+      return;
+    } else if (scrollLeft >= dangerZoneRight) {
+      isWarpingRef.current = true;
+      container.style.scrollSnapType = 'none';
+      container.scrollLeft = scrollLeft - 2 * loopWidth;
+      requestAnimationFrame(() => {
+        container.style.scrollSnapType = 'x mandatory';
+        requestAnimationFrame(() => {
+          isWarpingRef.current = false;
+        });
+      });
+      return;
+    }
+
+    // Under normal scrolling (including fast momentum/drag), we do not warp immediately.
+    // Instead, we wait until the user stops scrolling (idle) and is not touching the screen.
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (isInteractingRef.current) {
+        // Postpone warping if the user is actively dragging/touching
+        return;
+      }
+
+      const currentCopyIndex = Math.floor(scrollLeft / loopWidth);
+      if (currentCopyIndex !== 2) {
+        const diff = 2 - currentCopyIndex;
+        isWarpingRef.current = true;
+        container.style.scrollSnapType = 'none';
+        container.scrollLeft = scrollLeft + diff * loopWidth;
+        requestAnimationFrame(() => {
+          container.style.scrollSnapType = 'x mandatory';
+          requestAnimationFrame(() => {
+            isWarpingRef.current = false;
+          });
+        });
+      }
+    }, 150);
   };
 
   return (
@@ -108,6 +168,24 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
+            onTouchStart={() => { isInteractingRef.current = true; }}
+            onTouchEnd={() => {
+              isInteractingRef.current = false;
+              handleScroll();
+            }}
+            onTouchCancel={() => {
+              isInteractingRef.current = false;
+              handleScroll();
+            }}
+            onMouseDown={() => { isInteractingRef.current = true; }}
+            onMouseUp={() => {
+              isInteractingRef.current = false;
+              handleScroll();
+            }}
+            onMouseLeave={() => {
+              isInteractingRef.current = false;
+              handleScroll();
+            }}
             className="absolute inset-0 flex items-center gap-[5px] overflow-x-auto overflow-y-hidden px-[10vw] sm:px-[5vw] md:px-[5vw] snap-x snap-mandatory z-10 hero-scroll-container no-scrollbar"
             style={{
               scrollbarWidth: 'none',
@@ -128,7 +206,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
                       fill
                       sizes="(max-width: 640px) 312px, (max-width: 768px) 384px, (max-width: 1024px) 380px, 456px"
                       className="object-cover"
-                      priority={idx === itemsCount + Math.floor(itemsCount / 2)}
+                      priority={idx === 2 * itemsCount + Math.floor(itemsCount / 2)}
                     />
                   ) : (
                     <span className="text-gray-400 text-xs font-mono">Slot {(idx % itemsCount) + 1}</span>

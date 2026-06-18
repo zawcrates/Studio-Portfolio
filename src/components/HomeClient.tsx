@@ -117,9 +117,7 @@ export default function HomeClient({
                 <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Happy Clients</span>
               </div>
             </div>
-          </div>
-
-          {/* Intro Side Collage */}
+          </div>          {/* Intro Side Collage */}
           <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl group intro-collage-container intro-collage-animate">
             <Image
               src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop"
@@ -128,15 +126,7 @@ export default function HomeClient({
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 p-6 glass rounded-xl border border-border/10 flex items-center gap-4">
-              <div className="p-2.5 rounded-lg bg-accent/10 text-accent">
-                <Award className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs text-accent uppercase tracking-widest font-semibold">Award Winning</p>
-                <p className="text-sm text-foreground font-serif mt-0.5">Top 10 Photographers in South India</p>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
@@ -160,52 +150,56 @@ export default function HomeClient({
             >
               View All Albums <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
-          </div>
-
-          {/* Albums Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredAlbums.slice(0, 3).map((album, index) => (
+          </div>          {/* Widescreen Portfolio Showcase Card */}
+          {featuredAlbums[0] && (
+            <Link
+              href={`/portfolio/${featuredAlbums[0].slug}`}
+              className="block focus:outline-none"
+            >
               <motion.div
-                key={album.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 35 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative h-[450px] rounded-2xl overflow-hidden border border-border/5 flex flex-col justify-end p-6 shadow-xl portfolio-card"
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative w-full h-[350px] sm:h-[450px] md:h-[500px] rounded-none overflow-hidden border border-border/5 shadow-2xl group portfolio-card cursor-pointer"
               >
-                {/* Cover Image */}
+                {/* Background Cover Image */}
                 <Image
-                  src={album.cover_image}
-                  alt={album.title}
+                  src={featuredAlbums[0].cover_image}
+                  alt={featuredAlbums[0].title}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-w-768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
+                  sizes="100vw"
+                  priority
                 />
-                {/* Overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300" />
-                <div className="absolute inset-0 border border-transparent group-hover:border-accent/30 rounded-2xl transition-all duration-500 m-3 pointer-events-none" />
 
-                {/* Info Content */}
-                <div className="relative z-10 flex flex-col gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">
-                    {album.category}
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/95 via-black/55 to-transparent transition-opacity duration-300" />
+                <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-none transition-all duration-700 m-3 sm:m-4 pointer-events-none" />
+
+                {/* Text Content */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-end md:justify-center p-8 sm:p-12 md:p-16 max-w-2xl gap-3 sm:gap-4 text-left">
+                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#d4af37] font-semibold animate-pulse">
+                    Featured Album — {featuredAlbums[0].category}
                   </span>
-                  <h3 className="font-serif text-xl sm:text-2xl text-foreground font-light">
-                    {album.title}
+                  <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light leading-tight">
+                    {featuredAlbums[0].title}
                   </h3>
-                  <p className="text-xs text-gray-400 font-light line-clamp-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    {album.description || 'View client gallery and cinematic photo series.'}
+                  <p className="text-xs sm:text-sm text-gray-300 font-light line-clamp-3 leading-relaxed max-w-lg mt-1">
+                    {featuredAlbums[0].description || 'Discover a cinematic narrative of love, emotion, and elegant fine art imagery.'}
                   </p>
-                  <Link
-                    href={`/portfolio/${album.slug}`}
-                    className="text-xs font-semibold text-accent uppercase tracking-widest mt-2 flex items-center gap-1 hover:text-foreground transition-colors duration-300"
-                  >
-                    Open Album <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="mt-2 sm:mt-4">
+                    <span
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white bg-white/5 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
+                    >
+                      <span>explore gallery</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
               </motion.div>
-            ))}
-          </div>
+            </Link>
+          )}
         </div>
       </section>
 
