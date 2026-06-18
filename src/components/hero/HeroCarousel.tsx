@@ -82,7 +82,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
 
       {/* Center Tagline */}
       <div className="absolute top-[245px] sm:top-[305px] lg:top-[300px] xl:top-[280px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-30 pointer-events-none flex flex-col items-center gap-3 sm:gap-4 px-6 w-full max-w-4xl">
-        <h1 className="font-serif italic text-5xl sm:text-6xl lg:text-7xl xl:text-7xl font-light text-foreground leading-tight tracking-tight">
+        <h1 className="font-serif italic text-4xl sm:text-6xl lg:text-7xl xl:text-7xl font-light text-foreground leading-tight tracking-tight">
           Handcrafted stories, <br /> told in colors.
         </h1>
         <div className="h-[1px] w-12 sm:w-16 lg:w-20 xl:w-24 bg-accent/40 my-1" />
@@ -108,7 +108,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="absolute inset-0 flex items-center gap-[5px] overflow-x-auto overflow-y-hidden px-[10vw] sm:px-[5vw] md:px-[5vw] snap-x snap-mandatory z-10 hero-scroll-container"
+            className="absolute inset-0 flex items-center gap-[5px] overflow-x-auto overflow-y-hidden px-[10vw] sm:px-[5vw] md:px-[5vw] snap-x snap-mandatory z-10 hero-scroll-container no-scrollbar"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
