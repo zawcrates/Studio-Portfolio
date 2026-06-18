@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fee9ff; /* Page background */
+  --background: #feedff; /* Page background */
   --foreground: #414538; /* Body text */
   --walnut: #4E220F; /* Primary dark */
   --terracotta: #4E220F; /* Accent */

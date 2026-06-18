@@ -119,7 +119,7 @@ export default function Navbar() {
       {/* Brand Logo Link (z-50) */}
       <Link
         href="/"
-        className="fixed top-[10px] left-[10px] sm:top-[5px] sm:left-[0px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80"
+        className="fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80"
       >
         <Image
           src="/Varnam_svg3.png"
