@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Star, Heart, Calendar, Award, Compass, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Album, HeroImage, Service, Testimonial } from '@/lib/mockData';
 import HeroCarousel from '@/components/hero/HeroCarousel';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface HomeClientProps {
   heroImages: HeroImage[];
@@ -22,6 +27,7 @@ export default function HomeClient({
   testimonials,
 }: HomeClientProps) {
   const [currentTestimonialIdx, setCurrentTestimonialIdx] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const nextTestimonial = () => {
     setCurrentTestimonialIdx((prev) => (prev + 1) % testimonials.length);
@@ -31,30 +37,73 @@ export default function HomeClient({
     setCurrentTestimonialIdx((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
+  useGSAP(() => {
+    // Reveal text elements in the intro section
+    gsap.from(".intro-animate-text", {
+      scrollTrigger: {
+        trigger: ".intro-section-trigger",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power2.out",
+    });
+
+    // Reveal collage container in the intro section
+    gsap.from(".intro-collage-animate", {
+      scrollTrigger: {
+        trigger: ".intro-section-trigger",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+      x: 40,
+      opacity: 0,
+      duration: 1,
+      ease: "power2.out",
+    });
+
+    // Reveal portfolio section header
+    gsap.from(".portfolio-header-animate", {
+      scrollTrigger: {
+        trigger: ".portfolio-section-trigger",
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power2.out",
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="w-full">
+    <div className="w-full" ref={containerRef}>
       {/* 1. Curved Hero Carousel */}
       <HeroCarousel images={heroImages} />
 
       {/* 2. Studio Introduction Section */}
-      <section className="py-24 bg-background relative overflow-hidden home-section">
+      <section className="py-24 bg-background relative overflow-hidden home-section intro-section-trigger">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           {/* Text Content */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
+            <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold intro-animate-text">
               Behind the Lens
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light leading-tight">
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light leading-tight intro-animate-text">
               We Don't Just Take Photos. <br />
               <span className="italic text-foreground/75 font-serif">We Tell Stories.</span>
             </h2>
-            <p className="text-foreground font-light leading-relaxed text-base">
+            <p className="text-foreground font-light leading-relaxed text-base intro-animate-text">
               Aura Studio was founded with a singular purpose: to elevate photography into an immersive, premium art form. Based in Chennai, we document life's milestones—from spectacular weddings to corporate visual identities—with a distinctive cinematic style.
             </p>
-            <p className="text-foreground font-light leading-relaxed text-base">
+            <p className="text-foreground font-light leading-relaxed text-base intro-animate-text">
               We look for the authentic, unscripted in-between moments: the subtle squeeze of a hand, the quiet tear of a mother, the shared laughter of old friends. Our approach is unobtrusive, allowing your genuine emotions to shine through while we masterfully capture the lighting, composition, and aesthetic details.
             </p>
-            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-border/5 pt-8">
+            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-border/5 pt-8 intro-animate-text">
               <div className="flex flex-col">
                 <span className="font-serif text-3xl text-accent font-light">10+</span>
                 <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Years Experience</span>
@@ -71,7 +120,7 @@ export default function HomeClient({
           </div>
 
           {/* Intro Side Collage */}
-          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl group intro-collage-container">
+          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl group intro-collage-container intro-collage-animate">
             <Image
               src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop"
               alt="Photographer at work"
@@ -93,21 +142,21 @@ export default function HomeClient({
       </section>
 
       {/* 3. Featured Portfolio Section */}
-      <section className="py-24 bg-card border-y border-border/5 home-section">
+      <section className="py-24 bg-card border-y border-border/5 home-section portfolio-section-trigger">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div className="flex flex-col gap-3">
-              <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
+              <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold portfolio-header-animate">
                 Curated Gallery
               </span>
-              <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light">
+              <h2 className="font-serif text-3xl sm:text-5xl text-foreground font-light portfolio-header-animate">
                 Featured Love Stories
               </h2>
             </div>
             <Link
               href="/portfolio"
-              className="text-sm uppercase tracking-widest text-accent hover:text-foreground transition-colors duration-300 flex items-center gap-2 group font-semibold"
+              className="text-sm uppercase tracking-widest text-accent hover:text-foreground transition-colors duration-300 flex items-center gap-2 group font-semibold portfolio-header-animate"
             >
               View All Albums <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>

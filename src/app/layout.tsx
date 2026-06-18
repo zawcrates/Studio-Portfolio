@@ -4,6 +4,7 @@ import "./globals.css";
 
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import SmoothScrolling from "@/components/SmoothScrolling";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -52,9 +53,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="antialiased min-h-screen flex flex-col justify-between">
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <SmoothScrolling>
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </SmoothScrolling>
       </body>
     </html>
   );
