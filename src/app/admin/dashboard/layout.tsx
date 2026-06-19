@@ -21,6 +21,14 @@ export default function AdminDashboardLayout({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
+    // Demo mode: bypass auth checks and inject mock admin user
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      const mockUser = { id: 'demo-id', email: 'demo@admin.com' } as any;
+      setUser(mockUser);
+      setLoading(false);
+      return;
+    }
+
     const checkUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -157,6 +165,12 @@ export default function AdminDashboardLayout({
             <span className="font-semibold uppercase tracking-wider">AURA</span>
             <span className="font-light text-[#9D6638] text-xs">ADMIN</span>
           </Link>
+          {/* Demo mode badge */}
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
+            <div className="absolute top-2 left-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-medium shadow-md">
+              Demo Mode
+            </div>
+          )}
 
           {/* Links */}
           <nav className="flex flex-col gap-2">
