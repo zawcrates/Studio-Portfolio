@@ -7,11 +7,8 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  // Demo mode bypass: if enabled, skip all auth checks for admin routes
-  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
-    // Directly allow the request through without redirects
-    return supabaseResponse;
-  }
+  // Protect admin routes
+  if (path.startsWith('/admin')) {
     // Redirect root /admin and /admin/ to dashboard
     if (path === '/admin' || path === '/admin/') {
       const dashboardUrl = new URL('/admin/dashboard', request.url);
@@ -67,7 +64,7 @@ export async function middleware(request: NextRequest) {
       const dashboardUrl = new URL('/admin/dashboard', request.url);
       return NextResponse.redirect(dashboardUrl);
     }
-  
+  }
 
   return supabaseResponse;
 }
