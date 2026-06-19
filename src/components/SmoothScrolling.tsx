@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePathname } from "next/navigation";
 import "lenis/dist/lenis.css";
 
 // Register ScrollTrigger plugin with GSAP
@@ -11,6 +12,19 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScrolling({ children }: { children: React.ReactNode }) {
   const lenis = useLenis();
+  const pathname = usePathname();
+
+  // Scroll to top and clean up old ScrollTriggers on route change
+  useEffect(() => {
+    if (!lenis) return;
+
+    // Immediately reset scroll position to prevent old page scroll states from carrying over
+    lenis.scrollTo(0, { immediate: true });
+
+    // Kill stale ScrollTrigger instances to prevent memory leaks and layout recalculation lag
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    ScrollTrigger.refresh();
+  }, [pathname, lenis]);
 
   useEffect(() => {
     if (!lenis) return;

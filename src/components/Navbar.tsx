@@ -115,14 +115,16 @@ export default function Navbar() {
 
 
   const isGalleryPage = pathname?.startsWith('/portfolio/') && pathname !== '/portfolio';
+  const isAdminPage = pathname?.startsWith('/admin');
 
   return (
     <>
-      {!isGalleryPage && (
+      {!isGalleryPage && !isAdminPage && (
         <>
           {/* Brand Logo Link (z-50) */}
           <Link
             href="/"
+            onClick={() => setIsOpen(false)}
             className="fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80"
           >
             <Image
@@ -269,6 +271,7 @@ export default function Navbar() {
                           >
                             <Link
                               href={link.href}
+                              onClick={() => setIsOpen(false)}
                               className="group flex items-baseline select-none"
                             >
                               {/* Item Index */}

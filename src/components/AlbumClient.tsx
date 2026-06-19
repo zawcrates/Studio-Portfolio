@@ -179,7 +179,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
                   onClick={() => openLightbox(index)}
-                  className="break-inside-avoid mb-3 relative overflow-hidden border border-border/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group rounded-none"
+                  className="break-inside-avoid mb-3 relative overflow-hidden border border-border/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group rounded-2xl"
                 >
                   <img
                     src={photo.image_url}
@@ -189,7 +189,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
                   />
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="px-5 py-2 rounded-none glass border border-border/10 text-xs uppercase tracking-widest text-foreground font-semibold">
+                    <span className="px-5 py-2 rounded-full glass border border-border/10 text-xs uppercase tracking-widest text-foreground font-semibold">
                       Expand Image
                     </span>
                   </div>

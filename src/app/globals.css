@@ -50,19 +50,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbar */
+/* Hide scrollbar globally */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none !important;
 }
-::-webkit-scrollbar-track {
-  background: #070708;
-}
-::-webkit-scrollbar-thumb {
-  background: #1f1f23;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #d4af37;
+html, body {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
 }
 
 /* Glassmorphism utility */
@@ -71,6 +65,33 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Warm Light Glassmorphism utility */
+.glass-light {
+  background: rgba(252, 248, 236, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(157, 102, 56, 0.15);
+}
+
+/* Warm Dark Glassmorphism utility */
+.glass-dark-warm {
+  background: rgba(22, 11, 7, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(157, 102, 56, 0.12);
+}
+
+/* Ambient Glow Blobs */
+.bg-glow-accent {
+  background: radial-gradient(circle, rgba(78, 34, 15, 0.06) 0%, transparent 70%);
+}
+.bg-glow-accent-strong {
+  background: radial-gradient(circle, rgba(157, 102, 56, 0.12) 0%, transparent 75%);
+}
+.bg-glow-sage {
+  background: radial-gradient(circle, rgba(176, 186, 153, 0.08) 0%, transparent 70%);
 }
 
 /* Cinematic text shine */

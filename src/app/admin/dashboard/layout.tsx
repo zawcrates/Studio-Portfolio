@@ -123,17 +123,21 @@ export default function AdminDashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#070708] text-gray-300 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#0c0604] text-stone-200 flex flex-col md:flex-row relative overflow-hidden">
+      {/* Background Ambient Glows */}
+      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-glow-accent-strong rounded-full pointer-events-none blur-[120px] opacity-25" />
+      <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-10" />
+
       {/* Mobile Sticky Header */}
-      <header className="md:hidden h-16 bg-[#0e0e11] border-b border-border/5 flex items-center justify-between px-6 sticky top-0 z-40">
-        <Link href="/" className="flex items-center gap-2 text-md font-serif tracking-widest text-foreground">
+      <header className="md:hidden h-16 bg-[#130a07] border-b border-[#9D6638]/15 flex items-center justify-between px-6 sticky top-0 z-40 w-full">
+        <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
           <Camera className="w-4 h-4 text-accent" />
-          <span className="font-semibold uppercase text-sm">AURA</span>
-          <span className="font-light text-accent text-[10px]">ADMIN</span>
+          <span className="font-semibold uppercase tracking-wider text-sm">AURA</span>
+          <span className="font-light text-[#9D6638] text-[10px]">ADMIN</span>
         </Link>
         <button
           onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          className="p-2 -mr-2 text-gray-400 hover:text-foreground transition-colors cursor-pointer"
+          className="p-2 -mr-2 text-stone-400 hover:text-white transition-colors cursor-pointer"
           aria-label="Toggle Navigation Menu"
         >
           {isMobileSidebarOpen ? (
@@ -145,13 +149,13 @@ export default function AdminDashboardLayout({
       </header>
 
       {/* Desktop Sidebar (Permanent) */}
-      <aside className="hidden md:flex w-64 border-r border-border/5 bg-[#0e0e11] shrink-0 flex-col justify-between p-6">
+      <aside className="hidden md:flex w-64 border-r border-[#9D6638]/15 bg-[#130a07] shrink-0 flex-col justify-between p-6 relative z-10">
         <div className="flex flex-col gap-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 text-lg font-serif tracking-widest text-foreground">
-            <Camera className="w-5 h-5 text-accent" />
-            <span className="font-semibold uppercase">AURA</span>
-            <span className="font-light text-accent text-xs">ADMIN</span>
+          <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
+            <Camera className="w-5 h-5 text-[#9D6638]" />
+            <span className="font-semibold uppercase tracking-wider">AURA</span>
+            <span className="font-light text-[#9D6638] text-xs">ADMIN</span>
           </Link>
 
           {/* Links */}
@@ -163,10 +167,10 @@ export default function AdminDashboardLayout({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                     isActive
-                      ? 'bg-accent text-black font-semibold'
-                      : 'text-gray-400 hover:text-foreground hover:bg-background/[0.03]'
+                      ? 'bg-gradient-to-r from-[#9D6638] to-[#4E220F] text-white shadow-md shadow-[#4E220F]/20 font-semibold'
+                      : 'text-stone-400 hover:text-white hover:bg-white/[0.03]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -178,19 +182,19 @@ export default function AdminDashboardLayout({
         </div>
 
         {/* User Info & Logout */}
-        <div className="flex flex-col gap-4 border-t border-border/5 pt-6">
-          <div className="flex items-center gap-2 px-2">
-            <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
+        <div className="flex flex-col gap-4 border-t border-[#9D6638]/15 pt-6">
+          <div className="flex items-center gap-2.5 px-2">
+            <div className="w-8 h-8 rounded-full bg-accent/15 text-[#9D6638] flex items-center justify-center shrink-0 border border-[#9D6638]/20">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-foreground font-medium truncate">{user.email}</p>
-              <p className="text-[10px] text-gray-500 font-mono uppercase mt-0.5">Administrator</p>
+              <p className="text-xs text-white font-medium truncate">{user.email}</p>
+              <p className="text-[9px] text-[#9D6638] font-mono uppercase tracking-wider mt-0.5 font-semibold">Administrator</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full text-left cursor-pointer"
+            className="flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -204,23 +208,23 @@ export default function AdminDashboardLayout({
       }`}>
         {/* Backdrop */}
         <div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
         {/* Drawer Panel */}
-        <aside className={`absolute top-0 left-0 bottom-0 w-64 bg-[#0e0e11] border-r border-border/5 p-6 flex flex-col justify-between transition-transform duration-300 ease-out ${
+        <aside className={`absolute top-0 left-0 bottom-0 w-64 bg-[#130a07] border-r border-[#9D6638]/15 p-6 flex flex-col justify-between transition-transform duration-300 ease-out ${
           isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2 text-lg font-serif tracking-widest text-foreground">
-                <Camera className="w-5 h-5 text-accent" />
-                <span className="font-semibold uppercase">AURA</span>
-                <span className="font-light text-accent text-xs">ADMIN</span>
+              <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
+                <Camera className="w-5 h-5 text-[#9D6638]" />
+                <span className="font-semibold uppercase tracking-wider">AURA</span>
+                <span className="font-light text-[#9D6638] text-xs">ADMIN</span>
               </Link>
               <button
                 onClick={() => setIsMobileSidebarOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-foreground cursor-pointer"
+                className="p-1.5 text-stone-400 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -236,10 +240,10 @@ export default function AdminDashboardLayout({
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsMobileSidebarOpen(false)}
-                    className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'bg-accent text-black font-semibold'
-                        : 'text-gray-400 hover:text-foreground hover:bg-background/[0.03]'
+                        ? 'bg-gradient-to-r from-[#9D6638] to-[#4E220F] text-white shadow-md shadow-[#4E220F]/20 font-semibold'
+                        : 'text-stone-400 hover:text-white hover:bg-white/[0.03]'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -251,14 +255,14 @@ export default function AdminDashboardLayout({
           </div>
 
           {/* User Info & Logout */}
-          <div className="flex flex-col gap-4 border-t border-border/5 pt-6">
-            <div className="flex items-center gap-2 px-2">
-              <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
+          <div className="flex flex-col gap-4 border-t border-[#9D6638]/15 pt-6">
+            <div className="flex items-center gap-2.5 px-2">
+              <div className="w-8 h-8 rounded-full bg-accent/15 text-[#9D6638] flex items-center justify-center shrink-0 border border-[#9D6638]/20">
                 <User className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-foreground font-medium truncate">{user.email}</p>
-                <p className="text-[10px] text-gray-500 font-mono uppercase mt-0.5">Administrator</p>
+                <p className="text-xs text-white font-medium truncate">{user.email}</p>
+                <p className="text-[9px] text-[#9D6638] font-mono uppercase tracking-wider mt-0.5 font-semibold">Administrator</p>
               </div>
             </div>
             <button
@@ -266,7 +270,7 @@ export default function AdminDashboardLayout({
                 setIsMobileSidebarOpen(false);
                 handleLogout();
               }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full text-left cursor-pointer"
+              className="flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
@@ -276,7 +280,7 @@ export default function AdminDashboardLayout({
       </div>
 
       {/* Main Content Pane */}
-      <main className="flex-grow p-4 sm:p-6 md:p-12 overflow-y-auto max-h-screen">
+      <main className="flex-grow p-4 sm:p-6 md:p-12 overflow-y-auto max-h-screen relative z-10">
         {children}
       </main>
     </div>

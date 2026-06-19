@@ -39,28 +39,14 @@ export async function getAlbums(): Promise<Album[]> {
   try {
     const { data: albumsData, error: albumsError } = await supabase
       .from('albums')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*, photos(id, image_url)')
+      .order('created_at', { ascending: false })
+      .order('created_at', { foreignTable: 'photos', ascending: true });
 
     if (albumsError) throw albumsError;
 
     if (albumsData && albumsData.length > 0) {
-      // Fetch photos for each album
-      const albumsWithPhotos = await Promise.all(
-        albumsData.map(async (album) => {
-          const { data: photosData } = await supabase
-            .from('photos')
-            .select('id, image_url')
-            .eq('album_id', album.id)
-            .order('created_at', { ascending: true });
-
-          return {
-            ...album,
-            photos: photosData || [],
-          };
-        })
-      );
-      return albumsWithPhotos;
+      return albumsData;
     }
   } catch (error) {
     console.error('Error fetching albums from Supabase, falling back to mock data:', error);

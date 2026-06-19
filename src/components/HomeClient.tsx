@@ -27,6 +27,7 @@ export default function HomeClient({
   testimonials,
 }: HomeClientProps) {
   const [currentTestimonialIdx, setCurrentTestimonialIdx] = useState(0);
+  const [activeServiceIdx, setActiveServiceIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const nextTestimonial = () => {
@@ -161,7 +162,7 @@ export default function HomeClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative w-full h-[350px] sm:h-[450px] md:h-[500px] rounded-none overflow-hidden border border-border/5 shadow-2xl group portfolio-card cursor-pointer"
+                className="relative w-full h-[350px] sm:h-[450px] md:h-[500px] rounded-2xl overflow-hidden border border-border/5 shadow-2xl group portfolio-card cursor-pointer"
               >
                 {/* Background Cover Image */}
                 <Image
@@ -175,7 +176,7 @@ export default function HomeClient({
 
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/95 via-black/55 to-transparent transition-opacity duration-300" />
-                <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-none transition-all duration-700 m-3 sm:m-4 pointer-events-none" />
+                <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-2xl transition-all duration-700 m-3 sm:m-4 pointer-events-none" />
 
                 {/* Text Content */}
                 <div className="absolute inset-0 z-10 flex flex-col justify-end md:justify-center p-8 sm:p-12 md:p-16 max-w-2xl gap-3 sm:gap-4 text-left">
@@ -204,7 +205,7 @@ export default function HomeClient({
       </section>
 
       {/* 4. Services Overview Section */}
-      <section className="py-24 bg-background home-section">
+      <section className="py-24 bg-background home-section relative">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
           {/* Header */}
           <div className="text-center flex flex-col items-center gap-3">
@@ -217,39 +218,176 @@ export default function HomeClient({
             <div className="h-[1px] w-20 bg-accent/45 mt-4" />
           </div>
 
-          {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Desktop Switcher: Hidden on mobile/tablet */}
+          <div className="hidden lg:grid grid-cols-12 gap-12 items-center">
+            {/* Left Side: Services List Tabs (5 Columns) */}
+            <div className="col-span-5 flex flex-col gap-4">
+              {services.map((service, index) => {
+                const isActive = activeServiceIdx === index;
+                return (
+                  <div
+                    key={service.id}
+                    onMouseEnter={() => setActiveServiceIdx(index)}
+                    onClick={() => setActiveServiceIdx(index)}
+                    className="relative p-6 rounded-xl cursor-pointer transition-all duration-300 group flex items-start gap-5 select-none"
+                  >
+                    {/* Animated Tab Background capsule using Framer Motion layoutId */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeServiceIndicator"
+                        className="absolute inset-0 bg-cardbg/80 border border-border/10 shadow-sm rounded-xl -z-10"
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                    
+                    {/* Number Indicator */}
+                    <span className={`font-serif text-3xl font-light transition-colors duration-300 mt-0.5 ${
+                      isActive ? 'text-accent' : 'text-foreground/30 group-hover:text-foreground/50'
+                    }`}>
+                      0{index + 1}
+                    </span>
+
+                    {/* Content */}
+                    <div className="flex flex-col gap-1.5">
+                      <h3 className={`font-serif text-xl font-light transition-colors duration-300 ${
+                        isActive ? 'text-accent' : 'text-foreground group-hover:text-accent/70'
+                      }`}>
+                        {service.title}
+                      </h3>
+                      <p className="text-xs text-foreground/60 font-light leading-relaxed max-w-sm line-clamp-1">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Side: Showcase Frame (7 Columns) */}
+            <div className="col-span-7 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl flex items-end">
+              <AnimatePresence mode="wait">
+                {services[activeServiceIdx] && (
+                  <motion.div
+                    key={services[activeServiceIdx].id}
+                    initial={{ opacity: 0, scale: 1.03 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="absolute inset-0 w-full h-full"
+                  >
+                    <Image
+                      src={services[activeServiceIdx].coverImage}
+                      alt={services[activeServiceIdx].title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-w-1024px) 100vw, 50vw"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Floating glass card */}
+              {services[activeServiceIdx] && (
+                <div className="absolute bottom-6 left-6 right-6 p-6 glass-light rounded-xl flex flex-col gap-4 text-foreground z-10 border border-border/10 shadow-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-serif text-2xl text-accent font-light">
+                        {services[activeServiceIdx].title}
+                      </h4>
+                      <p className="text-[10px] text-foreground/50 uppercase tracking-[0.15em] font-semibold mt-1">
+                        Signature Deliverables
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center text-accent">
+                      {activeServiceIdx === 0 && <Heart className="w-4 h-4" />}
+                      {activeServiceIdx === 1 && <Compass className="w-4 h-4" />}
+                      {activeServiceIdx === 2 && <Calendar className="w-4 h-4" />}
+                      {activeServiceIdx === 3 && <Award className="w-4 h-4" />}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-foreground/80 font-light leading-relaxed">
+                    {services[activeServiceIdx].description}
+                  </p>
+
+                  <div className="border-t border-border/10 pt-4 flex justify-between items-center gap-4">
+                    <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-foreground/70 font-light flex-grow">
+                      {services[activeServiceIdx].features.slice(0, 2).map((feature, idx) => (
+                        <li key={idx} className="flex items-center gap-2 line-clamp-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href={`/services#${services[activeServiceIdx].slug}`}
+                      className="px-5 py-2.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-all duration-300 text-[10px] uppercase tracking-widest font-semibold flex items-center gap-1.5 shrink-0 shadow-md"
+                    >
+                      <span>Explore service</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Layout: Stack of premium interactive cards (visible on < lg) */}
+          <div className="lg:hidden flex flex-col gap-6">
             {services.map((service, index) => (
               <motion.div
                 key={service.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="glass rounded-2xl p-8 border border-border/5 flex flex-col gap-6 justify-between group hover:border-accent/20 hover:bg-background/[0.02] transition-all duration-500"
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="relative h-[320px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-xl flex items-end group"
               >
-                <div className="flex flex-col gap-4">
-                  {/* Icon Selection */}
-                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-all duration-500">
-                    {index === 0 && <Heart className="w-5 h-5" />}
-                    {index === 1 && <Compass className="w-5 h-5" />}
-                    {index === 2 && <Calendar className="w-5 h-5" />}
-                    {index === 3 && <Award className="w-5 h-5" />}
-                  </div>
-                  <h3 className="font-serif text-xl text-foreground font-light group-hover:text-accent transition-colors duration-300">
+                {/* Background Image */}
+                <Image
+                  src={service.coverImage}
+                  alt={service.title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-103"
+                  sizes="(max-w-768px) 100vw, 80vw"
+                />
+                
+                {/* Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                
+                {/* Floating Content */}
+                <div className="relative p-6 w-full flex flex-col gap-3 text-white z-10">
+                  <span className="text-[#d4af37] text-[10px] uppercase tracking-[0.2em] font-semibold flex items-center gap-1.5">
+                    {index === 0 && <Heart className="w-3.5 h-3.5" />}
+                    {index === 1 && <Compass className="w-3.5 h-3.5" />}
+                    {index === 2 && <Calendar className="w-3.5 h-3.5" />}
+                    {index === 3 && <Award className="w-3.5 h-3.5" />}
+                    0{index + 1}
+                  </span>
+                  
+                  <h3 className="font-serif text-2xl font-light text-white leading-tight">
                     {service.title}
                   </h3>
-                  <p className="text-sm text-gray-400 font-light leading-relaxed">
+                  
+                  <p className="text-xs text-gray-300 font-light line-clamp-2 leading-relaxed">
                     {service.description}
                   </p>
+                  
+                  <div className="flex justify-between items-center border-t border-white/10 pt-3 mt-1">
+                    <span className="text-[10px] text-gray-400 font-light">
+                      Includes {service.features.length} core deliverables
+                    </span>
+                    <Link
+                      href={`/services#${service.slug}`}
+                      className="text-[10px] font-semibold text-[#d4af37] uppercase tracking-widest flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      <span>Explore</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
                 </div>
-
-                <Link
-                  href={`/services#${service.slug}`}
-                  className="text-xs font-semibold text-foreground group-hover:text-accent uppercase tracking-widest flex items-center gap-1.5 mt-2 transition-colors duration-300"
-                >
-                  Learn More <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
-                </Link>
               </motion.div>
             ))}
           </div>
@@ -257,71 +395,127 @@ export default function HomeClient({
       </section>
 
       {/* 5. Testimonials Section */}
-      <section className="py-24 bg-card relative overflow-hidden border-t border-border/5 home-section">
-        <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8">
-          <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
-            Kind Words
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
-            Loved by Couples & Brands
-          </h2>
+      <section className="py-24 bg-cardbg/40 relative overflow-hidden border-t border-border/5 home-section">
+        {/* Background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-60" />
 
-          <div className="relative min-h-[200px] w-full flex items-center justify-center mt-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentTestimonialIdx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.4 }}
-                className="flex flex-col items-center gap-6"
-              >
-                <p className="font-serif text-lg sm:text-xl md:text-2xl text-gray-300 italic font-light leading-relaxed max-w-2xl">
-                  "{testimonials[currentTestimonialIdx]?.text}"
-                </p>
+        <div className="max-w-5xl mx-auto px-6 flex flex-col items-center gap-12 relative z-10">
+          {/* Header */}
+          <div className="text-center flex flex-col items-center gap-3">
+            <span className="text-accent tracking-[0.2em] text-xs uppercase font-semibold">
+              Kind Words
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
+              Loved by Couples & Brands
+            </h2>
+            <div className="h-[1px] w-20 bg-accent/45 mt-4" />
+          </div>
 
-                {/* Star Rating */}
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-gold text-accent" />
-                  ))}
-                </div>
+          {/* Testimonial Display Card */}
+          <div className="w-full max-w-3xl glass-light rounded-3xl p-8 sm:p-12 border border-border/10 shadow-2xl relative overflow-hidden">
+            {/* Background Decorative Quote Mark */}
+            <span className="absolute -top-4 -left-2 font-serif text-[180px] text-accent/5 leading-none select-none pointer-events-none">
+              “
+            </span>
 
-                <div className="flex items-center gap-3.5 mt-2">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-accent/30">
-                    <Image
-                      src={testimonials[currentTestimonialIdx]?.image || '/placeholder-profile.jpg'}
-                      alt={testimonials[currentTestimonialIdx]?.name}
-                      fill
-                      className="object-cover"
-                    />
+            <div className="relative min-h-[220px] w-full flex flex-col items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTestimonialIdx}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col items-center text-center gap-6"
+                >
+                  {/* Star Rating */}
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                    ))}
                   </div>
-                  <div className="text-left">
-                    <h4 className="text-sm font-semibold text-foreground font-serif tracking-wide">
+
+                  <p className="font-serif text-base sm:text-xl md:text-2xl text-foreground/90 italic font-light leading-relaxed max-w-2xl">
+                    "{testimonials[currentTestimonialIdx]?.text}"
+                  </p>
+
+                  <div className="flex flex-col items-center gap-2 mt-2">
+                    <h4 className="text-sm font-semibold text-accent font-serif tracking-wide uppercase">
                       {testimonials[currentTestimonialIdx]?.name}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-0.5 font-light">
+                    <p className="text-[11px] text-foreground/50 tracking-wider font-light uppercase">
                       {testimonials[currentTestimonialIdx]?.role}
                     </p>
                   </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Testimonial Nav Arrows inside Card (on sides) */}
+            {testimonials.length > 1 && (
+              <>
+                <button
+                  onClick={prevTestimonial}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full border border-border/10 hover:border-accent hover:text-accent hover:bg-accent/5 text-foreground/50 transition-all duration-300 hidden md:flex"
+                  aria-label="Previous Testimonial"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={nextTestimonial}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full border border-border/10 hover:border-accent hover:text-accent hover:bg-accent/5 text-foreground/50 transition-all duration-300 hidden md:flex"
+                  aria-label="Next Testimonial"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Testimonial Nav Arrows */}
+          {/* Interactive Client Face Avatars as Switchers */}
           {testimonials.length > 1 && (
-            <div className="flex gap-4 mt-4">
+            <div className="flex items-center gap-5 mt-2">
+              {testimonials.map((testimonial, idx) => {
+                const isActive = currentTestimonialIdx === idx;
+                return (
+                  <button
+                    key={testimonial.id}
+                    onClick={() => setCurrentTestimonialIdx(idx)}
+                    className="group relative flex flex-col items-center focus:outline-none"
+                    aria-label={`Show testimonial from ${testimonial.name}`}
+                  >
+                    <div className={`relative w-12 h-12 rounded-full overflow-hidden transition-all duration-500 cursor-pointer border ${
+                      isActive 
+                        ? 'border-accent scale-110 shadow-lg ring-4 ring-accent/10' 
+                        : 'border-border/20 opacity-55 hover:opacity-100 hover:scale-105'
+                    }`}>
+                      <Image
+                        src={testimonial.image || '/placeholder-profile.jpg'}
+                        alt={testimonial.name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Simple Mobile Navigation Arrows (Visible only on small viewports) */}
+          {testimonials.length > 1 && (
+            <div className="flex gap-4 md:hidden mt-2">
               <button
                 onClick={prevTestimonial}
-                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-gray-400 transition-colors"
+                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-[#414538]/70 transition-colors"
                 aria-label="Previous Testimonial"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={nextTestimonial}
-                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-gray-400 transition-colors"
+                className="p-2.5 rounded-full border border-border/10 hover:border-accent hover:text-accent text-[#414538]/70 transition-colors"
                 aria-label="Next Testimonial"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -332,30 +526,38 @@ export default function HomeClient({
       </section>
 
       {/* 6. Contact CTA Section */}
-      <section className="py-28 bg-background relative overflow-hidden home-section">
-        {/* Background Radial Light */}
+      <section className="py-28 relative overflow-hidden bg-gradient-to-br from-[#1c0f0b] to-[#0c0503] border-t border-border/5 text-center text-white home-section">
+        {/* Background glow and radial gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(157,102,56,0.12),transparent_60%)] pointer-events-none" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-20" />
 
-        <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8 relative z-10">
-          <h2 className="font-serif text-4xl sm:text-6xl text-foreground font-light leading-tight">
+        <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center gap-8">
+          <span className="text-[#d4af37] tracking-[0.25em] text-[10px] sm:text-xs uppercase font-semibold">
+            Co-create Art
+          </span>
+
+          <h2 className="font-serif text-4xl sm:text-6xl text-white font-light leading-tight">
             Let's Co-create Something <br />
             <span className="text-shine italic font-serif">Unforgettable</span>
           </h2>
-          <p className="max-w-lg text-gray-400 font-light text-sm sm:text-base leading-relaxed">
+
+          <p className="max-w-lg text-gray-300 font-light text-sm sm:text-base leading-relaxed">
             Whether it's a grand destination wedding, a pre-wedding seaside portrait session, or brand marketing campaigns, let's capture it exquisitely.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
             <Link
               href="/contact"
-              className="px-8 py-3.5 rounded-full bg-accent text-black hover:bg-accent-hover transition-all duration-300 text-xs uppercase tracking-widest font-semibold"
+              className="px-8 py-3.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-all duration-300 text-xs uppercase tracking-widest font-semibold shadow-lg"
             >
               Contact the Studio
-            </Link>
+              </Link>
             <a
               href="https://wa.me/919876543210?text=Hi%20Aura%20Studio!%20I'm%20interested%20in%20booking%20a%20photography%20session."
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-full border border-border/10 hover:border-accent hover:text-accent transition-all duration-300 text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2"
+              className="px-8 py-3.5 rounded-full border border-white/10 hover:border-[#d4af37] hover:text-[#d4af37] transition-all duration-300 text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 bg-white/5"
             >
               Chat on WhatsApp
             </a>

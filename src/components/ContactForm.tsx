@@ -120,11 +120,11 @@ ${data.message}`;
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass p-8 sm:p-12 rounded-3xl border border-accent/30 text-center flex flex-col items-center gap-6 max-w-lg mx-auto shadow-2xl shadow-gold/5"
+        className="glass-light p-8 sm:p-12 rounded-3xl border border-border/10 text-center flex flex-col items-center gap-6 max-w-lg mx-auto shadow-2xl"
       >
         <CheckCircle2 className="w-16 h-16 text-accent animate-bounce" />
         <h2 className="font-serif text-3xl text-foreground font-light">Inquiry Received!</h2>
-        <p className="text-gray-300 font-light text-sm sm:text-base leading-relaxed">
+        <p className="text-foreground/80 font-light text-sm sm:text-base leading-relaxed">
           Thank you for reaching out to Aura Studio. We have successfully logged your session details. 
         </p>
         <p className="text-accent font-light text-xs uppercase tracking-widest mt-2">
@@ -132,7 +132,7 @@ ${data.message}`;
         </p>
         <button
           onClick={() => setIsSuccess(false)}
-          className="mt-4 text-xs font-semibold text-gray-400 hover:text-foreground uppercase tracking-widest underline underline-offset-4 transition-colors"
+          className="mt-4 text-xs font-semibold text-foreground/50 hover:text-accent uppercase tracking-widest underline underline-offset-4 transition-colors"
         >
           Submit another inquiry
         </button>
@@ -151,19 +151,19 @@ ${data.message}`;
           <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light">
             Let's Talk About Your Shoot
           </h2>
-          <p className="text-gray-400 font-light leading-relaxed text-sm sm:text-base">
+          <p className="text-foreground/75 font-light leading-relaxed text-sm sm:text-base">
             Have a date in mind or want to discuss packaging options? Fill out the form, and let's bring your vision to life.
           </p>
         </div>
 
-        <ul className="flex flex-col gap-6 font-light text-sm text-gray-300 border-t border-border/5 pt-8">
+        <ul className="flex flex-col gap-6 font-light text-sm text-foreground/85 border-t border-border/10 pt-8">
           <li className="flex gap-4">
             <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
               <p className="font-serif text-foreground font-medium text-base">Studio Address</p>
-              <p className="text-gray-400 mt-1 text-xs sm:text-sm">
+              <p className="text-foreground/70 mt-1 text-xs sm:text-sm">
                 12, Khader Nawaz Khan Rd, Nungambakkam, Chennai, Tamil Nadu 600006
               </p>
             </div>
@@ -174,7 +174,7 @@ ${data.message}`;
             </div>
             <div>
               <p className="font-serif text-foreground font-medium text-base">Phone Inquiries</p>
-              <a href="tel:+919876543210" className="text-gray-400 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
+              <a href="tel:+919876543210" className="text-foreground/70 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
                 +91 98765 43210
               </a>
             </div>
@@ -185,7 +185,7 @@ ${data.message}`;
             </div>
             <div>
               <p className="font-serif text-foreground font-medium text-base">Direct Email</p>
-              <a href="mailto:hello@aurastudio.in" className="text-gray-400 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
+              <a href="mailto:hello@aurastudio.in" className="text-foreground/70 hover:text-accent mt-1 inline-block text-xs sm:text-sm">
                 hello@aurastudio.in
               </a>
             </div>
@@ -193,24 +193,24 @@ ${data.message}`;
         </ul>
 
         {/* Highlight Note */}
-        <div className="glass p-6 rounded-2xl border border-border/5 text-xs text-gray-400 leading-relaxed font-light">
-          <p className="font-semibold text-foreground uppercase tracking-wider mb-1">Lead Flow Notice:</p>
+        <div className="glass-light p-6 rounded-2xl border border-border/10 text-xs text-foreground/70 leading-relaxed font-light shadow-sm">
+          <p className="font-serif font-semibold text-accent uppercase tracking-wider mb-1">Lead Flow Notice:</p>
           Submitting this form logs your inquiry in our database and opens WhatsApp Web/Mobile with all details pre-formatted. This ensures instant booking priority.
         </div>
       </div>
 
       {/* Form Form */}
       <div className="lg:col-span-7">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 glass p-8 sm:p-10 rounded-3xl border border-border/5 shadow-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 glass-light p-8 sm:p-10 rounded-3xl border border-border/10 shadow-2xl">
           {errorMessage && (
-            <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-200 rounded-xl text-xs">
+            <div className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs">
               {errorMessage}
             </div>
           )}
 
           {/* Name Field */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+            <label htmlFor="name" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
               Full Name
             </label>
             <input
@@ -218,10 +218,10 @@ ${data.message}`;
               type="text"
               placeholder="e.g. Priya Sharma"
               {...register('name')}
-              className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
+              className="px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors placeholder:text-foreground/35"
             />
             {errors.name && (
-              <span className="text-xs text-red-400 font-light mt-0.5">{errors.name.message}</span>
+              <span className="text-xs text-red-600 font-light mt-0.5">{errors.name.message}</span>
             )}
           </div>
 
@@ -229,7 +229,7 @@ ${data.message}`;
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Phone */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="phone" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+              <label htmlFor="phone" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
                 Phone Number
               </label>
               <input
@@ -237,16 +237,16 @@ ${data.message}`;
                 type="tel"
                 placeholder="e.g. 9876543210"
                 {...register('phone')}
-                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
+                className="px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors placeholder:text-foreground/35"
               />
               {errors.phone && (
-                <span className="text-xs text-red-400 font-light mt-0.5">{errors.phone.message}</span>
+                <span className="text-xs text-red-600 font-light mt-0.5">{errors.phone.message}</span>
               )}
             </div>
 
             {/* Email */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+              <label htmlFor="email" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
                 Email Address
               </label>
               <input
@@ -254,10 +254,10 @@ ${data.message}`;
                 type="email"
                 placeholder="e.g. priya@gmail.com"
                 {...register('email')}
-                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
+                className="px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors placeholder:text-foreground/35"
               />
               {errors.email && (
-                <span className="text-xs text-red-400 font-light mt-0.5">{errors.email.message}</span>
+                <span className="text-xs text-red-600 font-light mt-0.5">{errors.email.message}</span>
               )}
             </div>
           </div>
@@ -266,46 +266,53 @@ ${data.message}`;
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Event Type */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="event_type" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+              <label htmlFor="event_type" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
                 Event Type
               </label>
-              <select
-                id="event_type"
-                {...register('event_type')}
-                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors appearance-none cursor-pointer"
-              >
-                <option value="" disabled className="text-gray-700">Select Event</option>
-                {EVENT_TYPES.map((type) => (
-                  <option key={type} value={type} className="bg-card text-foreground">
-                    {type}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  id="event_type"
+                  {...register('event_type')}
+                  className="w-full px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="" disabled className="text-foreground/50">Select Event</option>
+                  {EVENT_TYPES.map((type) => (
+                    <option key={type} value={type} className="bg-cardbg text-foreground">
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-foreground/60">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                  </svg>
+                </div>
+              </div>
               {errors.event_type && (
-                <span className="text-xs text-red-400 font-light mt-0.5">{errors.event_type.message}</span>
+                <span className="text-xs text-red-600 font-light mt-0.5">{errors.event_type.message}</span>
               )}
             </div>
 
             {/* Event Date */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="event_date" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+              <label htmlFor="event_date" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
                 Event Date
               </label>
               <input
                 id="event_date"
                 type="date"
                 {...register('event_date')}
-                className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors cursor-pointer"
+                className="px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors cursor-pointer"
               />
               {errors.event_date && (
-                <span className="text-xs text-red-400 font-light mt-0.5">{errors.event_date.message}</span>
+                <span className="text-xs text-red-600 font-light mt-0.5">{errors.event_date.message}</span>
               )}
             </div>
           </div>
 
           {/* Message Field */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="message" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
+            <label htmlFor="message" className="text-xs uppercase tracking-widest text-foreground/75 font-semibold font-serif">
               Inquiry / Message
             </label>
             <textarea
@@ -313,10 +320,10 @@ ${data.message}`;
               rows={4}
               placeholder="Tell us about your plans, locations, and styling requests..."
               {...register('message')}
-              className="px-4 py-3.5 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors resize-none placeholder:text-gray-600"
+              className="px-4 py-3.5 bg-[#FCF8EC]/40 border border-border/20 rounded-xl text-foreground text-sm focus:border-accent focus:ring-1 focus:ring-accent/25 focus:outline-none transition-colors resize-none placeholder:text-foreground/35"
             />
             {errors.message && (
-              <span className="text-xs text-red-400 font-light mt-0.5">{errors.message.message}</span>
+              <span className="text-xs text-red-600 font-light mt-0.5">{errors.message.message}</span>
             )}
           </div>
 
@@ -324,7 +331,7 @@ ${data.message}`;
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-4 py-4 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50"
+            className="w-full mt-4 py-4 rounded-full bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 shadow-md disabled:opacity-50"
           >
             {isSubmitting ? (
               <span>Sending Inquiry...</span>

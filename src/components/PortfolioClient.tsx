@@ -110,7 +110,7 @@ export default function PortfolioClient({ albums, initialCategory }: PortfolioCl
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ duration: 0.6 }}
-                      className="group relative w-full aspect-video rounded-none overflow-hidden border border-border/5 flex flex-col justify-end p-6 sm:p-10 md:p-12 lg:p-16 shadow-2xl portfolio-grid-card cursor-pointer"
+                      className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-border/5 flex flex-col justify-end p-6 sm:p-10 md:p-12 lg:p-16 shadow-2xl portfolio-grid-card cursor-pointer"
                     >
                       {/* Cover Photo */}
                       <Image
@@ -123,7 +123,7 @@ export default function PortfolioClient({ albums, initialCategory }: PortfolioCl
 
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/90 via-black/40 to-transparent transition-opacity duration-300" />
-                      <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-none transition-all duration-700 m-2 sm:m-3 pointer-events-none" />
+                      <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-2xl transition-all duration-700 m-2 sm:m-3 pointer-events-none" />
 
                       {/* Information */}
                       <div className="relative z-10 flex flex-col gap-2.5 w-full max-w-xl text-left transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">

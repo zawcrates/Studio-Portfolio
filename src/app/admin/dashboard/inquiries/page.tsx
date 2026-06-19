@@ -99,22 +99,22 @@ export default function AdminInquiriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-light">Client Inquiries</h1>
-          <p className="text-sm text-gray-500 mt-1.5 font-light">
+          <h1 className="font-serif text-3xl sm:text-4xl text-white font-light tracking-wide">Client Inquiries</h1>
+          <p className="text-sm text-stone-400 mt-1.5 font-light">
             Review session bookings, change inquiry statuses, and contact leads.
           </p>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex bg-[#0e0e11] p-1.5 rounded-xl border border-border/5 shrink-0 self-stretch sm:self-auto justify-center">
+        <div className="flex bg-[#130a07] p-1 rounded-full border border-[#9D6638]/15 shrink-0 self-stretch sm:self-auto justify-center">
           {['all', 'New', 'Contacted', 'Closed'].map((tab) => (
             <button
               key={tab}
               onClick={() => setStatusFilter(tab)}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                 statusFilter === tab
-                  ? 'bg-accent text-black font-semibold'
-                  : 'text-gray-400 hover:text-foreground'
+                  ? 'bg-gradient-to-r from-[#9D6638] to-[#4E220F] text-white shadow-md shadow-[#4E220F]/20'
+                  : 'text-stone-400 hover:text-white'
               }`}
             >
               {tab === 'all' ? 'All' : tab}
@@ -124,7 +124,7 @@ export default function AdminInquiriesPage() {
       </div>
 
       {errorMsg && (
-        <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-200 rounded-xl text-xs">
+        <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-200 rounded-xl text-xs font-semibold">
           {errorMsg}
         </div>
       )}
@@ -142,17 +142,17 @@ export default function AdminInquiriesPage() {
             return (
               <div
                 key={inq.id}
-                className="glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-5 relative"
+                className="glass-dark-warm p-6 sm:p-8 rounded-3xl flex flex-col gap-6 shadow-xl relative"
               >
                 {/* Header Information */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border/5 pb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#9D6638]/10 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-accent/15 text-[#9D6638] border border-[#9D6638]/20 flex items-center justify-center shrink-0">
                       <User className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="font-serif text-lg text-foreground font-light">{inq.name}</h3>
-                      <p className="text-[10px] text-gray-500 font-mono mt-0.5">
+                      <h3 className="font-serif text-lg text-white font-semibold">{inq.name}</h3>
+                      <p className="text-[10px] text-stone-500 font-mono mt-0.5">
                         Received: {new Date(inq.created_at).toLocaleString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -166,28 +166,28 @@ export default function AdminInquiriesPage() {
                   <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-start">
                     {/* Status Select dropdown */}
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase text-gray-500 font-semibold font-mono">Status:</span>
+                      <span className="text-[10px] uppercase text-stone-500 font-bold font-mono">Status:</span>
                       <select
                         value={inq.status}
                         disabled={updatingId === inq.id}
                         onChange={(e) => handleStatusChange(inq.id, e.target.value as any)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider cursor-pointer focus:outline-none ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer focus:outline-none transition-all ${
                           inq.status === 'New'
                             ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                             : inq.status === 'Contacted'
-                            ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                            : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                            ? 'bg-[#5b4daa]/15 text-[#887fd3] border border-[#5b4daa]/30'
+                            : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                         }`}
                       >
-                        <option value="New" className="bg-card text-foreground">New</option>
-                        <option value="Contacted" className="bg-card text-foreground">Contacted</option>
-                        <option value="Closed" className="bg-card text-foreground">Closed</option>
+                        <option value="New" className="bg-[#130a07] text-white">New</option>
+                        <option value="Contacted" className="bg-[#130a07] text-white">Contacted</option>
+                        <option value="Closed" className="bg-[#130a07] text-white">Closed</option>
                       </select>
                     </div>
 
                     <button
                       onClick={() => handleDeleteInquiry(inq.id)}
-                      className="p-2.5 rounded-lg border border-border/5 hover:border-red-500 hover:text-red-400 text-gray-500 transition-colors"
+                      className="p-2.5 rounded-xl border border-stone-850 hover:border-red-500 hover:text-red-400 text-stone-500 transition-colors cursor-pointer"
                       title="Delete Record"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -199,10 +199,10 @@ export default function AdminInquiriesPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm font-light">
                   {/* Event type & date */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold font-mono">Event details</span>
-                    <p className="text-foreground font-medium">{inq.event_type}</p>
-                    <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-1">
-                      <Calendar className="w-4 h-4 text-accent" /> {new Date(inq.event_date).toLocaleDateString('en-IN', {
+                    <span className="text-[10px] uppercase tracking-widest text-[#9D6638] font-bold font-mono">Event details</span>
+                    <p className="text-white font-semibold">{inq.event_type}</p>
+                    <p className="text-xs text-stone-400 flex items-center gap-1.5 mt-1">
+                      <Calendar className="w-4 h-4 text-[#9D6638]" /> {new Date(inq.event_date).toLocaleDateString('en-IN', {
                         weekday: 'short',
                         year: 'numeric',
                         month: 'long',
@@ -213,23 +213,23 @@ export default function AdminInquiriesPage() {
 
                   {/* Contact Info */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold font-mono">Contact Details</span>
-                    <a href={`tel:${inq.phone}`} className="text-foreground hover:text-accent flex items-center gap-1.5 font-medium transition-colors">
-                      <Phone className="w-4 h-4 text-accent" /> {inq.phone}
+                    <span className="text-[10px] uppercase tracking-widest text-[#9D6638] font-bold font-mono">Contact Details</span>
+                    <a href={`tel:${inq.phone}`} className="text-white hover:text-[#9D6638] flex items-center gap-1.5 font-semibold transition-colors">
+                      <Phone className="w-4 h-4 text-[#9D6638]" /> {inq.phone}
                     </a>
-                    <a href={`mailto:${inq.email}`} className="text-xs text-gray-400 hover:text-accent flex items-center gap-1.5 mt-1 transition-colors">
-                      <Mail className="w-4 h-4 text-accent" /> {inq.email}
+                    <a href={`mailto:${inq.email}`} className="text-xs text-stone-400 hover:text-[#9D6638] flex items-center gap-1.5 mt-1 transition-colors">
+                      <Mail className="w-4 h-4 text-[#9D6638]" /> {inq.email}
                     </a>
                   </div>
 
                   {/* Follow Up */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold font-mono">Follow Up Action</span>
+                    <span className="text-[10px] uppercase tracking-widest text-[#9D6638] font-bold font-mono">Follow Up Action</span>
                     <a
                       href={waUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-foreground font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-colors self-start"
+                      className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-colors self-start shadow-md shadow-emerald-950/20 cursor-pointer"
                     >
                       <MessageSquare className="w-3.5 h-3.5" /> Follow Up WhatsApp
                     </a>
@@ -237,9 +237,9 @@ export default function AdminInquiriesPage() {
                 </div>
 
                 {/* Client Message */}
-                <div className="bg-[#0e0e11] p-5 rounded-xl border border-border/5 flex flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold font-mono">Client Message:</span>
-                  <p className="text-xs text-gray-300 leading-relaxed font-light mt-1 whitespace-pre-wrap">
+                <div className="bg-[#0c0604]/40 p-5 rounded-2xl border border-[#9D6638]/10 flex flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold font-mono">Client Message:</span>
+                  <p className="text-xs text-stone-200 leading-relaxed font-light mt-1 whitespace-pre-wrap">
                     "{inq.message}"
                   </p>
                 </div>
@@ -247,7 +247,7 @@ export default function AdminInquiriesPage() {
             );
           })
         ) : (
-          <div className="py-16 text-center text-gray-500 font-serif font-light glass rounded-2xl border border-border/5">
+          <div className="py-16 text-center text-stone-500 font-serif font-light glass-dark-warm rounded-3xl shadow-xl">
             No inquiries match the current filter.
           </div>
         )}
