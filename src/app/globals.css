@@ -50,13 +50,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Hide scrollbar globally */
-::-webkit-scrollbar {
-  display: none !important;
-}
-html, body {
+/* Hide scrollbar globally for all elements while allowing scroll */
+* {
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
+}
+*::-webkit-scrollbar {
+  display: none !important;
 }
 
 /* Glassmorphism utility */
