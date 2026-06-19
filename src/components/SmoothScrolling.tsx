@@ -13,10 +13,11 @@ gsap.registerPlugin(ScrollTrigger);
 export default function SmoothScrolling({ children }: { children: React.ReactNode }) {
   const lenis = useLenis();
   const pathname = usePathname();
+  const isAdminPage = pathname?.startsWith('/admin');
 
   // Scroll to top and clean up old ScrollTriggers on route change
   useEffect(() => {
-    if (!lenis) return;
+    if (!lenis || isAdminPage) return;
 
     // Immediately reset scroll position to prevent old page scroll states from carrying over
     lenis.scrollTo(0, { immediate: true });
@@ -24,10 +25,10 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     // Kill stale ScrollTrigger instances to prevent memory leaks and layout recalculation lag
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     ScrollTrigger.refresh();
-  }, [pathname, lenis]);
+  }, [pathname, lenis, isAdminPage]);
 
   useEffect(() => {
-    if (!lenis) return;
+    if (!lenis || isAdminPage) return;
 
     // Sync Lenis scroll events with ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
@@ -43,7 +44,11 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     return () => {
       gsap.ticker.remove(update);
     };
-  }, [lenis]);
+  }, [lenis, isAdminPage]);
+
+  if (isAdminPage) {
+    return <>{children}</>;
+  }
 
   return (
     <ReactLenis root autoRaf={false}>
