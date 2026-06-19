@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
       const dashboardUrl = new URL('/admin/dashboard', request.url);
       return NextResponse.redirect(dashboardUrl);
     }
-  }
+  
 
   return supabaseResponse;
 }
