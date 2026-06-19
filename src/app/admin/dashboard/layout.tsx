@@ -123,7 +123,7 @@ export default function AdminDashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#0c0604] text-stone-200 flex flex-col md:flex-row relative overflow-hidden">
+    <div className="min-h-screen bg-[#0c0604] text-stone-200 flex flex-col md:flex-row relative overflow-hidden admin-layout-wrapper">
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-glow-accent-strong rounded-full pointer-events-none blur-[120px] opacity-25" />
       <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-10" />

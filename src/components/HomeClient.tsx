@@ -104,22 +104,22 @@ export default function HomeClient({
             <p className="text-foreground font-light leading-relaxed text-base intro-animate-text">
               We look for the authentic, unscripted in-between moments: the subtle squeeze of a hand, the quiet tear of a mother, the shared laughter of old friends. Our approach is unobtrusive, allowing your genuine emotions to shine through while we masterfully capture the lighting, composition, and aesthetic details.
             </p>
-            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-border/15 pt-8 intro-animate-text">
+            <div className="grid grid-cols-3 gap-6 mt-6 border-t border-border/5 pt-8 intro-animate-text">
               <div className="flex flex-col">
                 <span className="font-serif text-3xl text-accent font-light">10+</span>
-                <span className="text-xs uppercase tracking-widest text-foreground/70 mt-1">Years Experience</span>
+                <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Years Experience</span>
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-3xl text-accent font-light">300+</span>
-                <span className="text-xs uppercase tracking-widest text-foreground/70 mt-1">Weddings Captured</span>
+                <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Weddings Captured</span>
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-3xl text-accent font-light">100%</span>
-                <span className="text-xs uppercase tracking-widest text-foreground/70 mt-1">Happy Clients</span>
+                <span className="text-xs uppercase tracking-widest text-gray-500 mt-1">Happy Clients</span>
               </div>
             </div>
           </div>          {/* Intro Side Collage */}
-          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/15 shadow-2xl group intro-collage-container intro-collage-animate">
+          <div className="lg:col-span-5 relative h-[500px] w-full rounded-2xl overflow-hidden border border-border/5 shadow-2xl group intro-collage-container intro-collage-animate">
             <Image
               src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop"
               alt="Photographer at work"

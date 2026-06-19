@@ -5,10 +5,8 @@ import { SERVICES, TESTIMONIALS } from "@/lib/mockData";
 export const revalidate = 60; // ISR cache revalidation every 60s
 
 export default async function Home() {
-  const [heroImages, albums] = await Promise.all([
-    getHeroImages(),
-    getAlbums(),
-  ]);
+  const heroImages = await getHeroImages();
+  const albums = await getAlbums();
 
   return (
     <HomeClient

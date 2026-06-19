@@ -15,19 +15,40 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const isAdminPage = pathname?.startsWith('/admin');
 
-  // Scroll to top and refresh ScrollTriggers on route change
+  // Scroll to top and manage ScrollTrigger on route change
   useEffect(() => {
-    if (!lenis || isAdminPage) return;
+    // Log active ScrollTriggers for debugging
+    console.log("Active ScrollTriggers:", ScrollTrigger.getAll().length);
+
+    // Refresh ScrollTriggers after layout paint
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    if (isAdminPage || !lenis) return;
 
     // Immediately reset scroll position to prevent old page scroll states from carrying over
     lenis.scrollTo(0, { immediate: true });
-
-    // Refresh ScrollTrigger to recalculate positions for the new page layout
-    ScrollTrigger.refresh();
   }, [pathname, lenis, isAdminPage]);
 
+  // Refresh ScrollTriggers after all images have loaded to handle layout shifts
   useEffect(() => {
-    if (!lenis || isAdminPage) return;
+    const handleLoad = () => {
+      ScrollTrigger.refresh();
+      console.log('ScrollTrigger refreshed after images load');
+    };
+    window.addEventListener('load', handleLoad);
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, []);
+
+  // Ensure any critical sections start visible to avoid hidden state leakage
+  // This is a defensive pattern; actual refs should replace 'sectionRef' with specific element refs
+  // gsap.set(sectionRef.current, { autoAlpha: 1 });
+
+  useEffect(() => {
+    if (isAdminPage || !lenis) return;
 
     // Sync Lenis scroll events with ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
