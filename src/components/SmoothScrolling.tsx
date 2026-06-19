@@ -15,15 +15,14 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const isAdminPage = pathname?.startsWith('/admin');
 
-  // Scroll to top and clean up old ScrollTriggers on route change
+  // Scroll to top and refresh ScrollTriggers on route change
   useEffect(() => {
     if (!lenis || isAdminPage) return;
 
     // Immediately reset scroll position to prevent old page scroll states from carrying over
     lenis.scrollTo(0, { immediate: true });
 
-    // Kill stale ScrollTrigger instances to prevent memory leaks and layout recalculation lag
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    // Refresh ScrollTrigger to recalculate positions for the new page layout
     ScrollTrigger.refresh();
   }, [pathname, lenis, isAdminPage]);
 
