@@ -467,7 +467,7 @@ export default function AdminServicesPage() {
             setShowCreateForm(!showCreateForm);
             setEditingServiceId(null);
           }}
-          className="px-5 py-3 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
+          className="px-5 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
         >
           <Plus className="w-4 h-4" /> {showCreateForm ? 'Cancel Form' : 'Create Service'}
         </button>
@@ -570,7 +570,7 @@ export default function AdminServicesPage() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => handleImageUpload(e, false)}
                 disabled={actionLoading}
-                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-black hover:file:bg-accent-hover cursor-pointer w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
               />
             </div>
 
@@ -617,7 +617,7 @@ export default function AdminServicesPage() {
               <button
                 type="button"
                 onClick={handleAddFeature}
-                className="px-4 py-3 bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase rounded-xl transition-all"
+                className="px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase rounded-xl transition-all"
               >
                 Add
               </button>
@@ -666,7 +666,7 @@ export default function AdminServicesPage() {
           <button
             type="submit"
             disabled={actionLoading || !newCoverUrl}
-            className="self-end px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
+            className="self-end px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
           >
             Create Service
           </button>
@@ -758,7 +758,7 @@ export default function AdminServicesPage() {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => handleImageUpload(e, true)}
                 disabled={actionLoading}
-                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-black hover:file:bg-accent-hover cursor-pointer w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
               />
             </div>
 
@@ -804,7 +804,7 @@ export default function AdminServicesPage() {
               <button
                 type="button"
                 onClick={handleAddEditFeature}
-                className="px-4 py-3 bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase rounded-xl transition-all"
+                className="px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase rounded-xl transition-all"
               >
                 Add
               </button>
@@ -861,7 +861,7 @@ export default function AdminServicesPage() {
             <button
               type="submit"
               disabled={actionLoading || !editCoverUrl}
-              className="px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
+              className="px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
             >
               Save Changes
             </button>

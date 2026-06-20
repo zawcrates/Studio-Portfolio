@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -33,10 +34,17 @@ export default function AdminLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  // If already authenticated, redirect to dashboard
+  // If already authenticated or in Demo Admin Mode, redirect to dashboard
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        const demoRes = await fetch('/api/demo-mode');
+        const demoData = await demoRes.json();
+        if (demoData?.enabled === true) {
+          router.push('/admin/dashboard');
+          return;
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           // Query the admins table to check if user is authorized as an administrator
@@ -124,11 +132,19 @@ export default function AdminLoginPage() {
         <div className="flex flex-col items-center gap-3 text-center">
           <Link
             href="/"
-            className="flex items-center gap-2 text-2xl font-serif tracking-widest text-walnut font-light transition-opacity hover:opacity-95"
+            className="flex flex-col items-center gap-1.5 hover:opacity-85 transition-opacity"
           >
-            <Camera className="w-5 h-5 text-accent" />
-            <span className="font-semibold uppercase tracking-wider">AURA</span>
-            <span className="font-light text-accent/80">STUDIO</span>
+            <Image
+              src="/Varnam_svg3.png"
+              alt="Varnam Invites Logo"
+              width={160}
+              height={64}
+              className="h-12 w-auto object-contain"
+              priority
+            />
+            <span className="text-[10px] text-accent font-mono uppercase tracking-widest font-bold mt-1">
+              Admin Portal
+            </span>
           </Link>
           <h1 className="font-serif text-3xl text-walnut font-light tracking-wide mt-2">
             Administrator Access

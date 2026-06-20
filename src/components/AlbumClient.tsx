@@ -68,17 +68,6 @@ export default function AlbumClient({ album }: AlbumClientProps) {
       .trim();
   };
 
-  const getAlbumLocation = (album: Album) => {
-    const slug = album.slug.toLowerCase();
-    if (slug.includes('mahabalipuram')) return 'MAHABALIPURAM, INDIA';
-    if (slug.includes('chennai')) return 'CHENNAI, INDIA';
-    
-    const desc = (album.description || '').toLowerCase();
-    if (desc.includes('mahabalipuram')) return 'MAHABALIPURAM, INDIA';
-    if (desc.includes('chennai')) return 'CHENNAI, INDIA';
-    
-    return 'CHENNAI, INDIA';
-  };
 
   const formattedDate = new Date(album.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -90,14 +79,26 @@ export default function AlbumClient({ album }: AlbumClientProps) {
       
       {/* 1. Fullscreen Hero Section */}
       <div className="w-full h-screen relative flex flex-col items-center justify-center overflow-hidden select-none">
-        {/* Background Image */}
-        <Image
-          src={album.cover_image}
-          alt={album.title}
-          fill
-          priority
-          className="object-cover"
-        />
+        {/* Responsive Background Image - Desktop (Hidden on Mobile) */}
+        <div className="hidden md:block absolute inset-0">
+          <Image
+            src={album.desktop_cover_image || album.mobile_cover_image || album.cover_image}
+            alt={album.title}
+            fill
+            priority
+            className="object-cover"
+          />
+        </div>
+        {/* Responsive Background Image - Mobile (Hidden on Desktop) */}
+        <div className="block md:hidden absolute inset-0">
+          <Image
+            src={album.mobile_cover_image || album.desktop_cover_image || album.cover_image}
+            alt={album.title}
+            fill
+            priority
+            className="object-cover"
+          />
+        </div>
         
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/45 z-10" />
@@ -117,13 +118,10 @@ export default function AlbumClient({ album }: AlbumClientProps) {
           transition={{ duration: 1, ease: "easeOut" }}
           className="relative z-20 flex flex-col items-center gap-4 text-center px-6 max-w-4xl"
         >
-          <h1 className="font-sans text-5xl sm:text-7xl md:text-8xl text-white font-bold tracking-tight uppercase leading-tight">
+          <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl text-white font-light tracking-tight uppercase leading-tight">
             {getCoupleName(album.title)}
           </h1>
-          <div className="h-[1px] w-16 bg-white/40 my-2" />
-          <p className="text-xs sm:text-sm tracking-[0.4em] text-white/90 uppercase font-semibold">
-            {getAlbumLocation(album)}
-          </p>
+
         </motion.div>
 
         {/* Animated Scroll Down Indicator */}
@@ -161,11 +159,6 @@ export default function AlbumClient({ album }: AlbumClientProps) {
             <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light leading-tight">
               {album.title}
             </h2>
-
-            <p className="text-[#414538]/85 font-light leading-relaxed text-sm sm:text-base md:text-lg">
-              {album.description || 'Welcome to our client showcase gallery. Experience the moments frame-by-frame.'}
-            </p>
-            <div className="h-[1px] w-20 bg-accent/45 mt-2" />
           </div>
 
           {/* Gallery Grid (Masonry Layout) */}
@@ -179,7 +172,7 @@ export default function AlbumClient({ album }: AlbumClientProps) {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
                   onClick={() => openLightbox(index)}
-                  className="break-inside-avoid mb-3 relative overflow-hidden border border-border/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group rounded-2xl"
+                  className="break-inside-avoid mb-3 relative overflow-hidden border border-border/5 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 group rounded-none"
                 >
                   <img
                     src={photo.image_url}

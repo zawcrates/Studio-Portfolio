@@ -121,25 +121,88 @@ export default function Navbar() {
     <>
       {!isGalleryPage && !isAdminPage && (
         <>
-          {/* Brand Logo Link (z-50) */}
+          {/* 1. Mobile-only Sticky Header */}
+          <div className="md:hidden fixed top-0 left-0 w-full h-18 bg-background/85 backdrop-blur-md border-b border-border/10 flex items-center justify-between px-6 z-50">
+            {/* Logo */}
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className="select-none h-14 w-44 overflow-hidden flex items-center justify-start"
+            >
+              <Image
+                src="/Varnam_svg3.png"
+                alt="Varnam Invites"
+                width={176}
+                height={96}
+                className={`h-24 w-auto object-contain -my-5 transition-all duration-500 ${
+                  isOpen ? 'invert' : ''
+                }`}
+                priority
+              />
+            </Link>
+
+            {/* Visible Mobile Hamburger Trigger */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-11 h-11 flex items-center justify-center border transition-all duration-300 focus:outline-none"
+              style={{
+                borderColor: isOpen ? 'rgba(254, 233, 255, 0.15)' : 'rgba(78, 34, 15, 0.15)',
+                backgroundColor: isOpen ? 'transparent' : 'rgba(78, 34, 15, 0.85)',
+                borderRadius: '8px',
+              }}
+              aria-label="Toggle Navigation Menu"
+            >
+              <div className="relative w-8 h-8 flex flex-col justify-center items-center">
+                {/* Top Line */}
+                <motion.span
+                  animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute w-5 h-[1.5px]"
+                  style={{
+                    backgroundColor: isOpen ? 'var(--foreground)' : 'var(--background)',
+                  }}
+                />
+                {/* Middle Line */}
+                <motion.span
+                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute w-5 h-[1.5px]"
+                  style={{
+                    backgroundColor: 'var(--background)',
+                  }}
+                />
+                {/* Bottom Line */}
+                <motion.span
+                  animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute w-5 h-[1.5px]"
+                  style={{
+                    backgroundColor: isOpen ? 'var(--foreground)' : 'var(--background)',
+                  }}
+                />
+              </div>
+            </button>
+          </div>
+
+          {/* 2. Desktop-only Floating Brand Logo (z-50) */}
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80"
+            className="hidden md:flex fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80 h-32 w-64 overflow-hidden items-center justify-start"
           >
             <Image
               src="/Varnam_svg3.png"
               alt="Varnam Invites"
-              width={180}
-              height={72}
-              className={`h-25 sm:h-30 lg:h-40 w-auto object-contain transition-all duration-500 ${
+              width={320}
+              height={128}
+              className={`h-56 w-auto object-contain -my-12 transition-all duration-500 ${
                 isOpen ? 'invert' : ''
               }`}
               priority
             />
           </Link>
 
-          {/* 1. Circular Morphing Overlay Circle (z-40) */}
+          {/* 3. Circular Morphing Overlay Circle (z-40) */}
           <motion.div
             variants={circleVariants}
             initial="closed"
@@ -150,24 +213,24 @@ export default function Navbar() {
             }}
           />
 
-          {/* 2a. First Layered Circle Outline (z-50, pointer-events-none) */}
+          {/* 4a. First Layered Circle Outline (Desktop Only, z-50, pointer-events-none) */}
           <motion.div
             animate={isOpen ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}
-            className="fixed -top-[35px] -right-[55px] w-[130px] h-[130px] sm:-top-[40px] sm:-right-[75px] sm:w-[170px] sm:h-[170px] lg:-top-[50px] lg:-right-[95px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/20 pointer-events-none z-50 transition-all duration-500"
+            className="hidden md:block fixed -top-[35px] -right-[55px] w-[130px] h-[130px] sm:-top-[40px] sm:-right-[75px] sm:w-[170px] sm:h-[170px] lg:-top-[50px] lg:-right-[95px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/20 pointer-events-none z-50 transition-all duration-500"
           />
 
-          {/* 2b. Second Layered Circle Outline (z-50, pointer-events-none) - pushed slightly more out of the screen and slightly below */}
+          {/* 4b. Second Layered Circle Outline (Desktop Only, z-50, pointer-events-none) */}
           <motion.div
             animate={isOpen ? { opacity: 0, scale: 0.85 } : { opacity: 1, scale: 1 }}
             transition={{ duration: 0.45, ease: 'easeInOut', delay: 0.03 }}
-            className="fixed -top-[25px] -right-[65px] w-[130px] h-[130px] sm:-top-[30px] sm:-right-[95px] sm:w-[170px] sm:h-[170px] lg:-top-[30px] lg:-right-[120px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/15 pointer-events-none z-50 transition-all duration-500"
+            className="hidden md:block fixed -top-[25px] -right-[65px] w-[130px] h-[130px] sm:-top-[30px] sm:-right-[95px] sm:w-[170px] sm:h-[170px] lg:-top-[30px] lg:-right-[120px] lg:w-[200px] lg:h-[200px] rounded-full border border-accent/15 pointer-events-none z-50 transition-all duration-500"
           />
 
-          {/* 3. Interactive Hamburger / Close Button (z-50) */}
+          {/* 5. Desktop-only Interactive Hamburger / Close Button (z-50) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="fixed -top-[45px] -right-[45px] w-[130px] h-[130px] sm:-top-[60px] sm:-right-[60px] sm:w-[170px] sm:h-[170px] lg:-top-[70px] lg:-right-[70px] lg:w-[200px] lg:h-[200px] rounded-full z-50 flex items-end justify-start pb-[33px] pl-[33px] sm:pb-[35px] sm:pl-[35px] lg:pb-[50px] lg:pl-[50px] border transition-all duration-500 cursor-pointer focus:outline-none"
+            className="hidden md:flex fixed -top-[45px] -right-[45px] w-[130px] h-[130px] sm:-top-[60px] sm:-right-[60px] sm:w-[170px] sm:h-[170px] lg:-top-[70px] lg:-right-[70px] lg:w-[200px] lg:h-[200px] rounded-full z-50 flex items-end justify-start pb-[33px] pl-[33px] sm:pb-[35px] sm:pl-[35px] lg:pb-[50px] lg:pl-[50px] border transition-all duration-500 cursor-pointer focus:outline-none"
             style={{
               borderColor: isOpen ? 'rgba(254, 233, 255, 0.12)' : 'rgba(78, 34, 15, 0.1)',
               backgroundColor: isOpen ? 'transparent' : 'rgba(78, 34, 15, 0.7)',

@@ -33,14 +33,14 @@ export async function getHeroImages(): Promise<HeroImage[]> {
 
 export async function getAlbums(): Promise<Album[]> {
   if (!isSupabaseConfigured()) {
-    return MOCK_ALBUMS;
+    return [...MOCK_ALBUMS].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
   }
 
   try {
     const { data: albumsData, error: albumsError } = await supabase
       .from('albums')
       .select('*, photos(id, image_url)')
-      .order('created_at', { ascending: false })
+      .order('display_order', { ascending: true })
       .order('created_at', { foreignTable: 'photos', ascending: true });
 
     if (albumsError) throw albumsError;
@@ -52,7 +52,7 @@ export async function getAlbums(): Promise<Album[]> {
     console.error('Error fetching albums from Supabase, falling back to mock data:', error);
   }
 
-  return MOCK_ALBUMS;
+  return [...MOCK_ALBUMS].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 }
 
 export async function getAlbumBySlug(slug: string): Promise<Album | null> {

@@ -16,26 +16,36 @@ export async function POST(request: NextRequest) {
     // 1. Verify Authentication & Admin Role
     console.info('[Upload Trace] Step 1: Before authentication check');
     
-    const serverSupabase = await createServerClient();
-    const { data: { user } } = await serverSupabase.auth.getUser();
+    const isDemoMode = process.env.DEMO_ADMIN_MODE === 'true';
+    let user = null;
 
-    console.info(`[Upload Trace] Step 2: After authentication check. Authenticated user: ${user?.email || 'None'}`);
+    if (isDemoMode) {
+      // DEMO ONLY: Mock demo admin user for local review and upload preview.
+      user = { id: 'demo-admin-id', email: 'demo@admin.local' };
+      console.info('[Upload Bypass] Demo Admin Mode active. Bypassing authentication.');
+    } else {
+      const serverSupabase = await createServerClient();
+      const { data: { user: authUser } } = await serverSupabase.auth.getUser();
+      user = authUser;
 
-    if (!user) {
-      console.warn('[Unauthorized Upload Attempt] User is anonymous.');
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
-    }
+      console.info(`[Upload Trace] Step 2: After authentication check. Authenticated user: ${user?.email || 'None'}`);
 
-    // Verify user is registered in the admins table
-    const { data: adminData, error: adminErr } = await serverSupabase
-      .from('admins')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle();
+      if (!user) {
+        console.warn('[Unauthorized Upload Attempt] User is anonymous.');
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
 
-    if (adminErr || !adminData) {
-      console.warn(`[Unauthorized Upload Attempt] User: ${user.email} is not in the admins table.`);
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      // Verify user is registered in the admins table
+      const { data: adminData, error: adminErr } = await serverSupabase
+        .from('admins')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (adminErr || !adminData) {
+        console.warn(`[Unauthorized Upload Attempt] User: ${user.email} is not in the admins table.`);
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
     }
 
     // 2. Parse Multipart Form Data
@@ -120,25 +130,34 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   console.log("DELETE ROUTE HIT");
   try {
-    // 1. Verify Authentication & Admin Role
-    const serverSupabase = await createServerClient();
-    const { data: { user } } = await serverSupabase.auth.getUser();
+    const isDemoMode = process.env.DEMO_ADMIN_MODE === 'true';
+    let user = null;
 
-    if (!user) {
-      console.warn('[Unauthorized Delete Attempt] User is anonymous.');
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
-    }
+    if (isDemoMode) {
+      // DEMO ONLY: Mock demo admin user for local delete preview.
+      user = { id: 'demo-admin-id', email: 'demo@admin.local' };
+      console.info('[Delete Bypass] Demo Admin Mode active. Bypassing authentication.');
+    } else {
+      const serverSupabase = await createServerClient();
+      const { data: { user: authUser } } = await serverSupabase.auth.getUser();
+      user = authUser;
 
-    // Verify user is registered in the admins table
-    const { data: adminData, error: adminErr } = await serverSupabase
-      .from('admins')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle();
+      if (!user) {
+        console.warn('[Unauthorized Delete Attempt] User is anonymous.');
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
 
-    if (adminErr || !adminData) {
-      console.warn(`[Unauthorized Delete Attempt] User: ${user.email} is not in the admins table.`);
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      // Verify user is registered in the admins table
+      const { data: adminData, error: adminErr } = await serverSupabase
+        .from('admins')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (adminErr || !adminData) {
+        console.warn(`[Unauthorized Delete Attempt] User: ${user.email} is not in the admins table.`);
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
     }
 
     // 2. Parse request query params

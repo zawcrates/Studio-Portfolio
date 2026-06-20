@@ -162,17 +162,30 @@ export default function HomeClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative w-full h-[350px] sm:h-[450px] md:h-[500px] rounded-2xl overflow-hidden border border-border/5 shadow-2xl group portfolio-card cursor-pointer"
+                className="relative w-full h-[350px] sm:h-[450px] md:h-[500px] rounded-none overflow-hidden border border-border/5 shadow-2xl group portfolio-card cursor-pointer"
               >
-                {/* Background Cover Image */}
-                <Image
-                  src={featuredAlbums[0].cover_image}
-                  alt={featuredAlbums[0].title}
-                  fill
-                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
-                  sizes="100vw"
-                  priority
-                />
+                {/* Responsive Background Cover Image - Desktop (Hidden on Mobile) */}
+                <div className="hidden md:block absolute inset-0">
+                  <Image
+                    src={featuredAlbums[0].desktop_cover_image || featuredAlbums[0].mobile_cover_image || featuredAlbums[0].cover_image}
+                    alt={featuredAlbums[0].title}
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
+                    sizes="100vw"
+                    priority
+                  />
+                </div>
+                {/* Responsive Background Cover Image - Mobile (Hidden on Desktop) */}
+                <div className="block md:hidden absolute inset-0">
+                  <Image
+                    src={featuredAlbums[0].mobile_cover_image || featuredAlbums[0].desktop_cover_image || featuredAlbums[0].cover_image}
+                    alt={featuredAlbums[0].title}
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
+                    sizes="100vw"
+                    priority
+                  />
+                </div>
 
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/95 via-black/55 to-transparent transition-opacity duration-300" />

@@ -629,7 +629,7 @@ export default function AdminHeroPage() {
             <button
               type="submit"
               disabled={actionLoading || !newUrl.trim()}
-              className="w-full py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 shrink-0 cursor-pointer"
+              className="w-full py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 shrink-0 cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Add URL
             </button>

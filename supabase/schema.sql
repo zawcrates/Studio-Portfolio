@@ -17,7 +17,10 @@ CREATE TABLE IF NOT EXISTS albums (
   slug TEXT NOT NULL UNIQUE,
   category TEXT NOT NULL,
   cover_image TEXT NOT NULL,
+  desktop_cover_image TEXT,
+  mobile_cover_image TEXT,
   description TEXT,
+  display_order INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

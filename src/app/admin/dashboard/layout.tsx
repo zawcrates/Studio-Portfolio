@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { LayoutDashboard, Image as ImageIcon, MessageSquare, LogOut, Camera, User, Briefcase, Menu, X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AdminDashboardLayout({
   children,
@@ -19,10 +20,49 @@ export default function AdminDashboardLayout({
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
+    let demoEnabled = false;
+
     const checkUser = async () => {
       try {
+        const demoRes = await fetch('/api/demo-mode');
+        const demoData = await demoRes.json();
+        demoEnabled = demoData?.enabled === true;
+        setIsDemo(demoEnabled);
+
+        // DEMO ONLY: Bypass authentication and authorization checks when DEMO_ADMIN_MODE is enabled.
+        if (demoEnabled) {
+          try {
+            // Attempt to get existing session or sign in to Supabase Auth so that we are authenticated on the client side
+            const { data: { session: currentSession } } = await supabase.auth.getSession();
+            if (currentSession && currentSession.user.email === 'demo@admin.local') {
+              setUser(currentSession.user);
+            } else {
+              const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+                email: 'demo@admin.local',
+                password: 'demo-admin-password-123'
+              });
+              if (signInErr) throw signInErr;
+              setUser(signInData.user);
+            }
+          } catch (err) {
+            console.error('[Demo Auto Auth Error] Failed to authenticate mock demo admin with Supabase:', err);
+            // Fallback to fake client-side user object so the dashboard UI still loads
+            setUser({
+              id: 'demo-admin-id',
+              email: 'demo@admin.local',
+              user_metadata: {
+                name: 'Demo Admin',
+                role: 'admin'
+              }
+            });
+          }
+          setLoading(false);
+          return;
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
           router.push('/admin/login');
@@ -57,6 +97,9 @@ export default function AdminDashboardLayout({
 
     // Listen for auth state changes and verify admin status
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // DEMO ONLY: Skip verification callbacks when in demo admin mode.
+      if (demoEnabled) return;
+
       if (event === 'SIGNED_OUT') {
         setUser(null);
         router.push('/admin/login');
@@ -105,7 +148,7 @@ export default function AdminDashboardLayout({
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">Verifying Auth Session...</p>
+          <p className="text-xs uppercase tracking-widest text-foreground/60 font-semibold font-mono">Verifying Auth Session...</p>
         </div>
       </div>
     );
@@ -123,17 +166,36 @@ export default function AdminDashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#0c0604] text-stone-200 flex flex-col md:flex-row relative overflow-hidden admin-layout-wrapper">
-      {/* Background Ambient Glows */}
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-glow-accent-strong rounded-full pointer-events-none blur-[120px] opacity-25" />
-      <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-10" />
+    <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden admin-layout-wrapper">
+      {/* DEMO ONLY: Display a clear notice to indicate that the admin demo mode is running */}
+      {isDemo && (
+        <div className="bg-gradient-to-r from-amber-600 via-[#9D6638] to-amber-700 text-white py-2.5 px-4 text-center text-xs font-mono tracking-widest font-bold flex items-center justify-center gap-2 relative z-50 border-b border-white/10 shadow-md">
+          <span className="w-2 h-2 rounded-full bg-red-400 animate-ping shrink-0" />
+          <span>DEMO ADMIN MODE ACTIVE — AUTHENTICATION BYPASSED</span>
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row flex-grow relative min-h-0">
+        {/* Background Ambient Glows */}
+        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-glow-accent rounded-full pointer-events-none blur-[120px] opacity-40" />
+        <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-glow-sage rounded-full pointer-events-none blur-[100px] opacity-25" />
 
       {/* Mobile Sticky Header */}
-      <header className="md:hidden h-16 bg-[#130a07] border-b border-[#9D6638]/15 flex items-center justify-between px-6 sticky top-0 z-40 w-full">
-        <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
-          <Camera className="w-4 h-4 text-accent" />
-          <span className="font-semibold uppercase tracking-wider text-sm">AURA</span>
-          <span className="font-light text-[#9D6638] text-[10px]">ADMIN</span>
+      <header className="md:hidden h-16 bg-[#130a07] border-b border-[#9D6638]/15 flex items-center justify-between px-6 sticky top-0 z-40 w-full rounded-none">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
+          <div className="h-10 w-28 overflow-hidden flex items-center justify-start">
+            <Image
+              src="/Varnam_svg3.png"
+              alt="Varnam Invites Logo"
+              width={140}
+              height={56}
+              className="h-16 w-auto object-contain -my-3 invert"
+              priority
+            />
+          </div>
+          <span className="bg-accent/20 text-[#d4af37] border border-[#d4af37]/20 px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-wider font-bold">
+            Admin
+          </span>
         </Link>
         <button
           onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -149,14 +211,26 @@ export default function AdminDashboardLayout({
       </header>
 
       {/* Desktop Sidebar (Permanent) */}
-      <aside className="hidden md:flex w-64 border-r border-[#9D6638]/15 bg-[#130a07] shrink-0 flex-col justify-between p-6 relative z-10">
+      <aside className="hidden md:flex w-64 border-r border-[#9D6638]/15 bg-[#130a07] shrink-0 flex-col justify-between p-6 relative z-10 rounded-none">
         <div className="flex flex-col gap-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
-            <Camera className="w-5 h-5 text-[#9D6638]" />
-            <span className="font-semibold uppercase tracking-wider">AURA</span>
-            <span className="font-light text-[#9D6638] text-xs">ADMIN</span>
-          </Link>
+          <div className="px-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
+              <div className="h-12 w-36 overflow-hidden flex items-center justify-start">
+                <Image
+                  src="/Varnam_svg3.png"
+                  alt="Varnam Invites Logo"
+                  width={160}
+                  height={64}
+                  className="h-20 w-auto object-contain -my-4 invert"
+                  priority
+                />
+              </div>
+              <span className="bg-accent/20 text-[#d4af37] border border-[#d4af37]/20 px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider font-bold">
+                Admin
+              </span>
+            </Link>
+          </div>
 
           {/* Links */}
           <nav className="flex flex-col gap-2">
@@ -167,9 +241,9 @@ export default function AdminDashboardLayout({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                  className={`flex items-center gap-3.5 px-4 py-3 rounded-none text-sm font-medium transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#9D6638] to-[#4E220F] text-white shadow-md shadow-[#4E220F]/20 font-semibold'
+                      ? 'bg-accent text-white shadow-md shadow-accent/15 font-semibold'
                       : 'text-stone-400 hover:text-white hover:bg-white/[0.03]'
                   }`}
                 >
@@ -184,17 +258,17 @@ export default function AdminDashboardLayout({
         {/* User Info & Logout */}
         <div className="flex flex-col gap-4 border-t border-[#9D6638]/15 pt-6">
           <div className="flex items-center gap-2.5 px-2">
-            <div className="w-8 h-8 rounded-full bg-accent/15 text-[#9D6638] flex items-center justify-center shrink-0 border border-[#9D6638]/20">
+            <div className="w-8 h-8 rounded-none bg-accent/10 text-accent flex items-center justify-center shrink-0 border border-[#9D6638]/25">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-white font-medium truncate">{user.email}</p>
+              <p className="text-xs text-white font-semibold truncate">{user.email}</p>
               <p className="text-[9px] text-[#9D6638] font-mono uppercase tracking-wider mt-0.5 font-semibold">Administrator</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer"
+            className="flex items-center gap-3 px-4 py-3 rounded-none text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer font-mono"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -208,19 +282,29 @@ export default function AdminDashboardLayout({
       }`}>
         {/* Backdrop */}
         <div 
-          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
         {/* Drawer Panel */}
-        <aside className={`absolute top-0 left-0 bottom-0 w-64 bg-[#130a07] border-r border-[#9D6638]/15 p-6 flex flex-col justify-between transition-transform duration-300 ease-out ${
+        <aside className={`absolute top-0 left-0 bottom-0 w-64 bg-[#130a07] border-r border-[#9D6638]/15 p-6 flex flex-col justify-between transition-transform duration-300 ease-out rounded-none ${
           isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2.5 font-serif tracking-widest text-white hover:opacity-95">
-                <Camera className="w-5 h-5 text-[#9D6638]" />
-                <span className="font-semibold uppercase tracking-wider">AURA</span>
-                <span className="font-light text-[#9D6638] text-xs">ADMIN</span>
+              <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
+                <div className="h-12 w-36 overflow-hidden flex items-center justify-start">
+                  <Image
+                    src="/Varnam_svg3.png"
+                    alt="Varnam Invites Logo"
+                    width={160}
+                    height={64}
+                    className="h-20 w-auto object-contain -my-4 invert"
+                    priority
+                  />
+                </div>
+                <span className="bg-accent/20 text-[#d4af37] border border-[#d4af37]/20 px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider font-bold">
+                  Admin
+                </span>
               </Link>
               <button
                 onClick={() => setIsMobileSidebarOpen(false)}
@@ -240,9 +324,9 @@ export default function AdminDashboardLayout({
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsMobileSidebarOpen(false)}
-                    className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                    className={`flex items-center gap-3.5 px-4 py-3 rounded-none text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-[#9D6638] to-[#4E220F] text-white shadow-md shadow-[#4E220F]/20 font-semibold'
+                        ? 'bg-accent text-white shadow-md shadow-accent/15 font-semibold'
                         : 'text-stone-400 hover:text-white hover:bg-white/[0.03]'
                     }`}
                   >
@@ -257,11 +341,11 @@ export default function AdminDashboardLayout({
           {/* User Info & Logout */}
           <div className="flex flex-col gap-4 border-t border-[#9D6638]/15 pt-6">
             <div className="flex items-center gap-2.5 px-2">
-              <div className="w-8 h-8 rounded-full bg-accent/15 text-[#9D6638] flex items-center justify-center shrink-0 border border-[#9D6638]/20">
+              <div className="w-8 h-8 rounded-none bg-accent/10 text-accent flex items-center justify-center shrink-0 border border-[#9D6638]/25">
                 <User className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-white font-medium truncate">{user.email}</p>
+                <p className="text-xs text-white font-semibold truncate">{user.email}</p>
                 <p className="text-[9px] text-[#9D6638] font-mono uppercase tracking-wider mt-0.5 font-semibold">Administrator</p>
               </div>
             </div>
@@ -270,7 +354,7 @@ export default function AdminDashboardLayout({
                 setIsMobileSidebarOpen(false);
                 handleLogout();
               }}
-              className="flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer"
+              className="flex items-center gap-3 px-4 py-3 rounded-none text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all w-full text-left cursor-pointer font-mono"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
@@ -283,6 +367,7 @@ export default function AdminDashboardLayout({
       <main className="flex-grow p-4 sm:p-6 md:p-12 overflow-y-auto max-h-screen relative z-10">
         {children}
       </main>
+      </div>
     </div>
   );
 }

@@ -64,10 +64,6 @@ export default function PortfolioClient({ albums, initialCategory }: PortfolioCl
           <h1 className="font-serif text-4xl sm:text-6xl text-foreground font-light">
             Portfolio Galleries
           </h1>
-          <p className="text-gray-400 font-light leading-relaxed text-sm sm:text-base mt-2">
-            Browse through our cinematic photography chapters. Each album represents a unique story of love, joy, or brand identity.
-          </p>
-          <div className="h-[1px] w-20 bg-accent/45 mx-auto mt-2" />
         </div>
 
         {/* Categories Tab Bar */}
@@ -110,20 +106,32 @@ export default function PortfolioClient({ albums, initialCategory }: PortfolioCl
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ duration: 0.6 }}
-                      className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-border/5 flex flex-col justify-end p-6 sm:p-10 md:p-12 lg:p-16 shadow-2xl portfolio-grid-card cursor-pointer"
+                      className="group relative w-full aspect-video rounded-none overflow-hidden border border-border/5 flex flex-col justify-end p-6 sm:p-10 md:p-12 lg:p-16 shadow-2xl portfolio-grid-card cursor-pointer"
                     >
-                      {/* Cover Photo */}
-                      <Image
-                        src={album.cover_image}
-                        alt={album.title}
-                        fill
-                        className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
-                        sizes="100vw"
-                      />
+                      {/* Responsive Cover Photo - Desktop (Hidden on Mobile) */}
+                      <div className="hidden md:block absolute inset-0">
+                        <Image
+                          src={album.desktop_cover_image || album.mobile_cover_image || album.cover_image}
+                          alt={album.title}
+                          fill
+                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
+                          sizes="100vw"
+                        />
+                      </div>
+                      {/* Responsive Cover Photo - Mobile (Hidden on Desktop) */}
+                      <div className="block md:hidden absolute inset-0">
+                        <Image
+                          src={album.mobile_cover_image || album.desktop_cover_image || album.cover_image}
+                          alt={album.title}
+                          fill
+                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103"
+                          sizes="100vw"
+                        />
+                      </div>
 
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/90 via-black/40 to-transparent transition-opacity duration-300" />
-                      <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-2xl transition-all duration-700 m-2 sm:m-3 pointer-events-none" />
+                      <div className="absolute inset-0 border border-transparent group-hover:border-accent/35 rounded-none transition-all duration-700 m-2 sm:m-3 pointer-events-none" />
 
                       {/* Information */}
                       <div className="relative z-10 flex flex-col gap-2.5 w-full max-w-xl text-left transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">

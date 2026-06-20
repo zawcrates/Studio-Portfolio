@@ -23,14 +23,14 @@ export default function Footer() {
         <div className="flex flex-col gap-5">
           <Link
             href="/"
-            className="flex items-center select-none hover:opacity-95 transition-opacity duration-300 w-fit"
+            className="flex items-center select-none hover:opacity-95 transition-opacity duration-300 w-fit h-12 w-36 overflow-hidden justify-start"
           >
             <Image
               src="/Varnam_svg3.png"
               alt="Varnam Invites"
-              width={140}
-              height={56}
-              className="h-10 w-auto object-contain brightness-0 invert"
+              width={160}
+              height={64}
+              className="h-20 w-auto object-contain -my-4 brightness-0 invert"
             />
           </Link>
           <p className="text-sm text-neutral-400 mt-2 leading-relaxed font-light">
