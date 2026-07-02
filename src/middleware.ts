@@ -17,6 +17,18 @@ export async function middleware(request: NextRequest) {
 
     const isLoginRoute = path === '/admin/login';
 
+    // DEMO ONLY: Bypass authentication and authorization checks when DEMO_ADMIN_MODE is enabled.
+    // This allows client reviews and local dashboard design iterations without requiring database credentials.
+    // Ensure this feature flag is set to false/undefined in production environment configurations.
+    const isDemoMode = process.env.DEMO_ADMIN_MODE === 'true';
+    if (isDemoMode) {
+      if (isLoginRoute) {
+        const dashboardUrl = new URL('/admin/dashboard', request.url);
+        return NextResponse.redirect(dashboardUrl);
+      }
+      return supabaseResponse;
+    }
+
     if (!user) {
       if (!isLoginRoute) {
         const loginUrl = new URL('/admin/login', request.url);

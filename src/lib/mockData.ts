@@ -9,8 +9,11 @@ export interface Album {
   slug: string;
   category: string;
   cover_image: string;
+  desktop_cover_image?: string | null;
+  mobile_cover_image?: string | null;
   created_at: string;
-  description?: string;
+  description?: string | null;
+  display_order?: number;
   photos: Photo[];
 }
 
@@ -18,6 +21,9 @@ export interface HeroImage {
   id: string;
   image_url: string;
   display_order: number;
+  title?: string;
+  subtitle?: string;
+  alt_text?: string;
 }
 
 export interface Service {
@@ -41,18 +47,45 @@ export interface Testimonial {
 export const MOCK_HERO_IMAGES: HeroImage[] = [
   {
     id: 'hero-1',
-    image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1920&auto=format&fit=crop',
+    image_url: '/hero1.png',
     display_order: 1,
+    title: 'The Poetry of Light',
+    subtitle: 'Fine Art Wedding Photography',
   },
   {
     id: 'hero-2',
-    image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1920&auto=format&fit=crop',
+    image_url: '/hero2.png',
     display_order: 2,
+    title: 'Authentic Love Stories',
+    subtitle: 'Pre-Wedding Seaside Portraits',
   },
   {
     id: 'hero-3',
-    image_url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1920&auto=format&fit=crop',
+    image_url: '/hero3.png',
     display_order: 3,
+    title: 'Elegance in Every Frame',
+    subtitle: 'Cinematic Event & Editorial Shoots',
+  },
+  {
+    id: 'hero-4',
+    image_url: '/hero7.png',
+    display_order: 4,
+    title: 'Capturing the Ephemeral',
+    subtitle: 'Sunset Editorial & Portrait Sessions',
+  },
+  {
+    id: 'hero-5',
+    image_url: '/hero5.png',
+    display_order: 5,
+    title: 'Moments Frozen in Time',
+    subtitle: 'Candid Bridal & Groom Portraits',
+  },
+  {
+    id: 'hero-6',
+    image_url: '/hero6.png',
+    display_order: 6,
+    title: 'Detailing the Celebration',
+    subtitle: 'Luxury Floral Decor & Styling',
   },
 ];
 
@@ -65,6 +98,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-05-15T08:00:00Z',
     description: 'An elegant traditional-meets-modern wedding celebration held at the Leela Palace, Chennai.',
+    display_order: 1,
     photos: [
       { id: 'p1-1', image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p1-2', image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop' },
@@ -82,6 +116,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-04-20T08:00:00Z',
     description: 'A sunrise pre-wedding session capturing love against the backdrop of historical Shore Temple ruins and beach waves in Mahabalipuram.',
+    display_order: 2,
     photos: [
       { id: 'p2-1', image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p2-2', image_url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1200&auto=format&fit=crop' },
@@ -97,6 +132,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-05-02T08:00:00Z',
     description: 'A modern, intimate ring exchange ceremony at the Taj Connemara with elegant floral decor.',
+    display_order: 3,
     photos: [
       { id: 'p3-1', image_url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p3-2', image_url: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=1200&auto=format&fit=crop' },
@@ -111,6 +147,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-03-12T08:00:00Z',
     description: 'A dreamy, natural light indoor and outdoor maternity photoshoot displaying the joy of motherhood.',
+    display_order: 4,
     photos: [
       { id: 'p4-1', image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p4-2', image_url: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=1200&auto=format&fit=crop' },
@@ -124,6 +161,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-02-28T08:00:00Z',
     description: 'Capturing dynamic speakers, high-energy performances, and enthusiastic audience interactions at the TEDx Chennai event.',
+    display_order: 5,
     photos: [
       { id: 'p5-1', image_url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p5-2', image_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=1200&auto=format&fit=crop' },
@@ -138,6 +176,7 @@ export const MOCK_ALBUMS: Album[] = [
     cover_image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop',
     created_at: '2026-01-15T08:00:00Z',
     description: 'Clean, modern executive portraits and workspace lifestyle shots for brand identity and corporate usage.',
+    display_order: 6,
     photos: [
       { id: 'p6-1', image_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop' },
       { id: 'p6-2', image_url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200&auto=format&fit=crop' },

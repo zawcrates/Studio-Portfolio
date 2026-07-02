@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { 
   Trash2, 
@@ -17,7 +17,11 @@ import {
   Link2,
   Move,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Calendar,
+  Tag,
+  PlusCircle,
+  GripVertical
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -33,7 +37,10 @@ interface Album {
   slug: string;
   category: string;
   cover_image: string;
-  description?: string;
+  desktop_cover_image?: string | null;
+  mobile_cover_image?: string | null;
+  description?: string | null;
+  display_order?: number;
   photos: Photo[];
   created_at?: string;
 }
@@ -61,6 +68,8 @@ export default function AdminPortfolioPage() {
   const [newCategory, setNewCategory] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newCoverUrl, setNewCoverUrl] = useState('');
+  const [newDesktopCoverUrl, setNewDesktopCoverUrl] = useState('');
+  const [newMobileCoverUrl, setNewMobileCoverUrl] = useState('');
 
   // Form states (Edit Album)
   const [editingAlbumId, setEditingAlbumId] = useState<string | null>(null);
@@ -68,6 +77,8 @@ export default function AdminPortfolioPage() {
   const [editCategory, setEditCategory] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editCoverUrl, setEditCoverUrl] = useState('');
+  const [editDesktopCoverUrl, setEditDesktopCoverUrl] = useState('');
+  const [editMobileCoverUrl, setEditMobileCoverUrl] = useState('');
 
   // Direct manual photo URL state
   const [photoUrlInput, setPhotoUrlInput] = useState<{ [albumId: string]: string }>({});
@@ -78,6 +89,12 @@ export default function AdminPortfolioPage() {
   // Drag and drop tracking
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [draggedAlbumId, setDraggedAlbumId] = useState<string | null>(null);
+  const [activeDraggedAlbumIndex, setActiveDraggedAlbumIndex] = useState<number | null>(null);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const addDebugLog = (msg: string) => {
+    setDebugLogs(prev => [msg, ...prev].slice(0, 10));
+    console.log(`[DND-DEBUG] ${msg}`);
+  };
 
   // Expanded album details tracking
   const [expandedAlbumId, setExpandedAlbumId] = useState<string | null>(null);
@@ -87,7 +104,7 @@ export default function AdminPortfolioPage() {
       const { data: albumsData, error: albumsErr } = await supabase
         .from('albums')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('display_order', { ascending: true });
 
       if (albumsErr) throw albumsErr;
 
@@ -151,12 +168,19 @@ export default function AdminPortfolioPage() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
 
+    const nextDisplayOrder = albums.length > 0
+      ? Math.max(...albums.map(a => a.display_order || 0)) + 1
+      : 1;
+
     const newAlbumRecord = {
       title: newTitle.trim(),
       slug,
       category: newCategory,
       cover_image: newCoverUrl.trim(),
+      desktop_cover_image: newDesktopCoverUrl.trim() || null,
+      mobile_cover_image: newMobileCoverUrl.trim() || null,
       description: newDescription.trim(),
+      display_order: nextDisplayOrder,
     };
 
     const tempId = crypto.randomUUID();
@@ -188,6 +212,8 @@ export default function AdminPortfolioPage() {
       setNewCategory('');
       setNewDescription('');
       setNewCoverUrl('');
+      setNewDesktopCoverUrl('');
+      setNewMobileCoverUrl('');
       setShowCreateForm(false);
     } catch (err: any) {
       console.error('Error creating album:', err);
@@ -204,6 +230,8 @@ export default function AdminPortfolioPage() {
     setEditCategory(album.category);
     setEditDescription(album.description || '');
     setEditCoverUrl(album.cover_image);
+    setEditDesktopCoverUrl(album.desktop_cover_image || '');
+    setEditMobileCoverUrl(album.mobile_cover_image || '');
     setErrorMsg(null);
     setSuccessMsg(null);
   };
@@ -230,6 +258,8 @@ export default function AdminPortfolioPage() {
       slug,
       category: editCategory,
       cover_image: editCoverUrl.trim(),
+      desktop_cover_image: editDesktopCoverUrl.trim() || null,
+      mobile_cover_image: editMobileCoverUrl.trim() || null,
       description: editDescription.trim(),
     };
 
@@ -311,6 +341,20 @@ export default function AdminPortfolioPage() {
         const coverFileName = extractFilename(album.cover_image);
         if (coverFileName) {
           filesToDelete.push({ fileName: coverFileName, isCover: true });
+        }
+      }
+
+      if (album.desktop_cover_image && album.desktop_cover_image.includes('/storage/v1/object/public/portfolio-images/')) {
+        const desktopCoverFileName = extractFilename(album.desktop_cover_image);
+        if (desktopCoverFileName) {
+          filesToDelete.push({ fileName: desktopCoverFileName, isCover: true });
+        }
+      }
+
+      if (album.mobile_cover_image && album.mobile_cover_image.includes('/storage/v1/object/public/portfolio-images/')) {
+        const mobileCoverFileName = extractFilename(album.mobile_cover_image);
+        if (mobileCoverFileName) {
+          filesToDelete.push({ fileName: mobileCoverFileName, isCover: true });
         }
       }
 
@@ -405,7 +449,7 @@ export default function AdminPortfolioPage() {
   };
 
   // Cover Image upload helper
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'standard' | 'desktop' | 'mobile') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -427,11 +471,15 @@ export default function AdminPortfolioPage() {
       if (!res.ok) throw new Error(data.error || 'Upload failed');
 
       if (editingAlbumId) {
-        setEditCoverUrl(data.url);
+        if (type === 'standard') setEditCoverUrl(data.url);
+        else if (type === 'desktop') setEditDesktopCoverUrl(data.url);
+        else if (type === 'mobile') setEditMobileCoverUrl(data.url);
       } else {
-        setNewCoverUrl(data.url);
+        if (type === 'standard') setNewCoverUrl(data.url);
+        else if (type === 'desktop') setNewDesktopCoverUrl(data.url);
+        else if (type === 'mobile') setNewMobileCoverUrl(data.url);
       }
-      setSuccessMsg('Cover image uploaded successfully!');
+      setSuccessMsg(`${type.charAt(0).toUpperCase() + type.slice(1)} cover image uploaded successfully!`);
     } catch (err: any) {
       console.error('Upload error:', err);
       setErrorMsg(err.message || 'Failed to upload cover file.');
@@ -653,6 +701,7 @@ export default function AdminPortfolioPage() {
 
   // HTML5 Drag and Drop Handlers
   const handleDragStart = (e: React.DragEvent, albumId: string, index: number) => {
+    e.stopPropagation();
     setDraggedIndex(index);
     setDraggedAlbumId(albumId);
     e.dataTransfer.effectAllowed = 'move';
@@ -711,10 +760,118 @@ export default function AdminPortfolioPage() {
     setDraggedAlbumId(null);
   };
 
+  // Album Drag and Drop Reordering Handlers
+  const albumDraggedIndexRef = useRef<number | null>(null);
+  const [albumDragOverIndex, setAlbumDragOverIndex] = useState<number | null>(null);
+
+  const handleAlbumDragStart = (e: React.DragEvent, index: number) => {
+    const target = e.target as HTMLElement;
+    
+    // Prevent dragging if initiated inside the expanded details section
+    const inDetails = target.closest('.album-expanded-details');
+    // Prevent dragging if initiated on interactive controls inside the header
+    const isInteractive = target.closest('button') || target.closest('a') || target.closest('input') || target.closest('.chevron-toggle');
+    
+    addDebugLog(`DragStart: target=${target.tagName}, class=${target.className}, inDetails=${!!inDetails}, isInteractive=${!!isInteractive}`);
+
+    if (inDetails || isInteractive) {
+      addDebugLog(`DragStart cancelled`);
+      e.preventDefault();
+      return;
+    }
+    
+    albumDraggedIndexRef.current = index;
+    setActiveDraggedAlbumIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', albums[index].id);
+    addDebugLog(`DragStart success for index ${index}`);
+  };
+
+  const handleAlbumDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (albumDraggedIndexRef.current === index) return;
+    if (albumDragOverIndex !== index) {
+      setAlbumDragOverIndex(index);
+      addDebugLog(`DragOver index ${index}`);
+    }
+  };
+
+  const handleAlbumDragLeave = (index: number) => {
+    if (albumDragOverIndex === index) {
+      setAlbumDragOverIndex(null);
+      addDebugLog(`DragLeave index ${index}`);
+    }
+  };
+
+  const handleAlbumDrop = async (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    const sourceIndex = albumDraggedIndexRef.current;
+    addDebugLog(`Drop: source=${sourceIndex}, target=${targetIndex}`);
+    if (sourceIndex === null || sourceIndex === targetIndex) {
+      addDebugLog(`Drop ignored: sourceIndex=${sourceIndex}`);
+      return;
+    }
+
+    setAlbumDragOverIndex(null);
+    setActionLoading(true);
+    setErrorMsg(null);
+
+    const reorderedAlbums = [...albums];
+    const [draggedAlbum] = reorderedAlbums.splice(sourceIndex, 1);
+    reorderedAlbums.splice(targetIndex, 0, draggedAlbum);
+
+    // Apply sequential display orders
+    const updatedAlbums = reorderedAlbums.map((album, idx) => ({
+      ...album,
+      display_order: idx + 1
+    }));
+
+    // Optimistic Update
+    setAlbums(updatedAlbums);
+    addDebugLog(`Optimistic update applied for target index ${targetIndex}`);
+
+    try {
+      // Commit display order updates to the database
+      const updates = updatedAlbums.map(album => ({
+        id: album.id,
+        title: album.title,
+        slug: album.slug,
+        category: album.category,
+        cover_image: album.cover_image,
+        desktop_cover_image: album.desktop_cover_image,
+        mobile_cover_image: album.mobile_cover_image,
+        description: album.description,
+        display_order: album.display_order
+      }));
+
+      const { error } = await supabase.from('albums').upsert(updates);
+      if (error) throw error;
+
+      setSuccessMsg('Reordered albums successfully!');
+      addDebugLog(`Database save success!`);
+    } catch (err: any) {
+      console.error('Failed to commit album reorder:', err);
+      setErrorMsg(err.message || 'Failed to save album order in database.');
+      addDebugLog(`Database save error: ${err.message}`);
+      fetchAlbums();
+    } finally {
+      setActionLoading(false);
+      albumDraggedIndexRef.current = null;
+      setActiveDraggedAlbumIndex(null);
+    }
+  };
+
+  const handleAlbumDragEnd = () => {
+    addDebugLog(`DragEnd triggered`);
+    albumDraggedIndexRef.current = null;
+    setAlbumDragOverIndex(null);
+    setActiveDraggedAlbumIndex(null);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -724,7 +881,7 @@ export default function AdminPortfolioPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-white font-light">Portfolio Albums</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-light">Portfolio Albums</h1>
           <p className="text-sm text-gray-500 mt-1.5 font-light">
             Create albums, add photo collections, and manage existing client showcases.
           </p>
@@ -734,7 +891,7 @@ export default function AdminPortfolioPage() {
             setShowCreateForm(!showCreateForm);
             setEditingAlbumId(null);
           }}
-          className="px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
+          className="px-5 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
         >
           <Plus className="w-4 h-4" /> {showCreateForm ? 'Cancel Form' : 'Create Album'}
         </button>
@@ -757,13 +914,13 @@ export default function AdminPortfolioPage() {
 
       {/* Bulk Upload Progress Overlay */}
       {uploadProgress && (
-        <div className="p-4 bg-gold/10 border border-gold/25 text-gold rounded-xl text-xs flex items-center justify-between">
+        <div className="p-4 bg-accent/10 border border-accent/25 text-accent rounded-xl text-xs flex items-center justify-between">
           <span className="font-semibold uppercase tracking-wider">
             Bulk Uploading Photos: {uploadProgress.current} of {uploadProgress.total} completed
           </span>
-          <div className="w-24 bg-white/10 rounded-full h-1.5 overflow-hidden">
+          <div className="w-24 bg-background/10 rounded-full h-1.5 overflow-hidden">
             <div 
-              className="bg-gold h-full transition-all duration-300"
+              className="bg-accent h-full transition-all duration-300"
               style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
             />
           </div>
@@ -772,8 +929,8 @@ export default function AdminPortfolioPage() {
 
       {/* Create Album Form */}
       {showCreateForm && (
-        <form onSubmit={handleCreateAlbum} className="glass p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col gap-5 bg-[#0e0e11]">
-          <h2 className="font-serif text-xl text-white font-light border-b border-white/5 pb-3">New Portfolio Album</h2>
+        <form onSubmit={handleCreateAlbum} className="glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-5 bg-[#0e0e11]">
+          <h2 className="font-serif text-xl text-foreground font-light border-b border-border/5 pb-3">New Portfolio Album</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
@@ -787,7 +944,7 @@ export default function AdminPortfolioPage() {
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 required
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -799,7 +956,7 @@ export default function AdminPortfolioPage() {
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
                 required
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors appearance-none cursor-pointer"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors appearance-none cursor-pointer"
               >
                 <option value="" disabled>Select Category</option>
                 {CATEGORIES.map(cat => (
@@ -811,34 +968,120 @@ export default function AdminPortfolioPage() {
             </div>
           </div>
 
-          {/* Cover Image */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
-                <Upload className="w-3.5 h-3.5 text-gold" /> Upload Cover Image *
-              </label>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleCoverUpload}
-                disabled={actionLoading}
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-black hover:file:bg-gold-hover cursor-pointer w-full"
-              />
+          {/* Responsive Cover Images Group */}
+          <div className="border-t border-border/5 pt-5 flex flex-col gap-6">
+            <h3 className="text-xs font-semibold text-accent uppercase tracking-widest">Album Cover Styling</h3>
+            
+            {/* 1. Main Cover Image (Required Fallback) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start bg-cardbg/20 p-4 border border-border/5 rounded-xl">
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-accent" /> Default Cover Image * <span className="text-[10px] text-gray-500 font-normal lowercase">(used if no responsive image is available)</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => handleCoverUpload(e, 'standard')}
+                    disabled={actionLoading}
+                    className="px-3.5 py-2 bg-background border border-border/10 rounded-lg text-gray-400 text-[10px] focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Or paste image URL..."
+                    value={newCoverUrl}
+                    onChange={(e) => setNewCoverUrl(e.target.value)}
+                    required
+                    className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center h-full min-h-[90px] border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                {newCoverUrl ? (
+                  <>
+                    <img src={newCoverUrl} alt="Default Cover Preview" className="object-cover w-full h-24" />
+                    <button type="button" onClick={() => setNewCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[10px] text-gray-500 italic">No image selected</span>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor="cover" className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
-                Or Paste Cover Image URL *
-              </label>
-              <input
-                id="cover"
-                type="url"
-                placeholder="https://..."
-                value={newCoverUrl}
-                onChange={(e) => setNewCoverUrl(e.target.value)}
-                required
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
-              />
+            {/* 2. Desktop Cover Image (Optional) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start bg-cardbg/20 p-4 border border-border/5 rounded-xl">
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-accent" /> Desktop Cover Image <span className="text-[10px] text-gray-500 font-normal lowercase">(optional, recommended: 1920x1080)</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => handleCoverUpload(e, 'desktop')}
+                    disabled={actionLoading}
+                    className="px-3.5 py-2 bg-background border border-border/10 rounded-lg text-gray-400 text-[10px] focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Or paste image URL..."
+                    value={newDesktopCoverUrl}
+                    onChange={(e) => setNewDesktopCoverUrl(e.target.value)}
+                    className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center h-full min-h-[90px] border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                {newDesktopCoverUrl ? (
+                  <>
+                    <img src={newDesktopCoverUrl} alt="Desktop Cover Preview" className="object-cover w-full h-24" />
+                    <button type="button" onClick={() => setNewDesktopCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[10px] text-gray-500 italic">No image selected</span>
+                )}
+              </div>
+            </div>
+
+            {/* 3. Mobile Cover Image (Optional) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start bg-cardbg/20 p-4 border border-border/5 rounded-xl">
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-accent" /> Mobile Cover Image <span className="text-[10px] text-gray-500 font-normal lowercase">(optional, recommended: 1080x1350)</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => handleCoverUpload(e, 'mobile')}
+                    disabled={actionLoading}
+                    className="px-3.5 py-2 bg-background border border-border/10 rounded-lg text-gray-400 text-[10px] focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Or paste image URL..."
+                    value={newMobileCoverUrl}
+                    onChange={(e) => setNewMobileCoverUrl(e.target.value)}
+                    className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center h-full min-h-[90px] border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                {newMobileCoverUrl ? (
+                  <>
+                    <img src={newMobileCoverUrl} alt="Mobile Cover Preview" className="object-cover w-full h-24" />
+                    <button type="button" onClick={() => setNewMobileCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[10px] text-gray-500 italic">No image selected</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -852,14 +1095,14 @@ export default function AdminPortfolioPage() {
               placeholder="Provide context, location, and key details..."
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors resize-none w-full"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors resize-none w-full"
             />
           </div>
 
           <button
             type="submit"
             disabled={actionLoading || !newCoverUrl}
-            className="self-end px-8 py-3 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
+            className="self-end px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
           >
             Create Album
           </button>
@@ -869,79 +1112,131 @@ export default function AdminPortfolioPage() {
       {/* Album List Accordion */}
       <div className="flex flex-col gap-6">
         {albums.length > 0 ? (
-          albums.map((album) => {
+          albums.map((album, index) => {
             const isExpanded = expandedAlbumId === album.id;
             const isEditing = editingAlbumId === album.id;
+            const isDragOver = albumDragOverIndex === index;
             return (
-              <div key={album.id} className="glass rounded-2xl border border-white/5 overflow-hidden flex flex-col bg-[#0e0e11]">
+              <div 
+                key={album.id} 
+                draggable={!actionLoading}
+                onDragStart={(e) => handleAlbumDragStart(e, index)}
+                onDragOver={(e) => handleAlbumDragOver(e, index)}
+                onDragLeave={() => handleAlbumDragLeave(index)}
+                onDrop={(e) => handleAlbumDrop(e, index)}
+                onDragEnd={handleAlbumDragEnd}
+                className={`glass rounded-2xl border overflow-hidden flex flex-col bg-[#0e0e11] transition-all duration-300 ${
+                  isDragOver ? 'border-accent shadow-lg shadow-accent/5' : 'border-border/5'
+                } ${activeDraggedAlbumIndex === index ? 'opacity-30' : ''}`}
+              >
                 {/* Album Header Bar */}
                 <div
                   onClick={() => setExpandedAlbumId(isExpanded ? null : album.id)}
-                  className="p-6 flex items-center justify-between gap-6 cursor-pointer hover:bg-white/[0.01] transition-colors"
+                  className="album-header-bar p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 cursor-pointer hover:bg-background/[0.01] transition-colors select-none"
                 >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                  <div className="flex items-center gap-4 min-w-0 w-full sm:w-auto">
+                    {/* Drag Handle */}
+                    <div 
+                      className="album-drag-handle p-1 hover:text-accent text-gray-600 cursor-grab active:cursor-grabbing transition-colors shrink-0"
+                      title="Drag to reorder album"
+                      onClick={(e) => e.stopPropagation()} // Prevent expanding/collapsing when clicking handle
+                    >
+                      <GripVertical className="w-5 h-5 pointer-events-none" />
+                    </div>
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-border/10 shrink-0 pointer-events-none">
                       <Image
                         src={album.cover_image}
                         alt={album.title}
                         fill
-                        className="object-cover"
+                        className="object-cover pointer-events-none"
                       />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-grow select-none">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-serif text-lg text-white font-light truncate">{album.title}</h3>
-                        <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-white/5 text-gold font-semibold">
+                        <h3 className="font-serif text-base sm:text-lg text-foreground font-light truncate">{album.title}</h3>
+                        <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-background/5 text-accent font-semibold">
                           {album.category}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1 truncate max-w-lg">{album.description || 'No description provided.'}</p>
+                      <p className="text-xs text-gray-500 mt-1 truncate max-w-xs sm:max-w-lg">{album.description || 'No description provided.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-xs text-gray-400 font-mono hidden sm:inline">
+                  <div 
+                    className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto shrink-0 border-t border-border/5 pt-3 sm:border-0 sm:pt-0"
+                    onClick={(e) => e.stopPropagation()}
+                    onDragStart={(e) => e.stopPropagation()}
+                  >
+                    <span className="text-xs text-gray-400 font-mono sm:hidden">
                       {album.photos.length} Photos
                     </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startEditAlbum(album);
-                        setExpandedAlbumId(album.id);
-                      }}
-                      disabled={actionLoading}
-                      className="p-2.5 rounded-lg border border-white/5 hover:border-gold hover:text-gold text-gray-400 transition-colors"
-                      title="Edit Album"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteAlbum(album);
-                      }}
-                      disabled={actionLoading}
-                      className="p-2.5 rounded-lg border border-white/5 hover:border-red-500 hover:text-red-400 text-gray-400 transition-colors"
-                      title="Delete Album"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    <div className="flex items-center gap-3 ml-auto sm:ml-0">
+                      <span className="text-xs text-gray-400 font-mono hidden sm:inline">
+                        {album.photos.length} Photos
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedAlbumId(album.id);
+                          setTimeout(() => {
+                            const fileInput = document.getElementById(`file-upload-${album.id}`);
+                            if (fileInput) {
+                              fileInput.click();
+                            }
+                          }, 150);
+                        }}
+                        disabled={actionLoading}
+                        className="px-3.5 py-2 rounded-lg bg-accent hover:bg-accent-hover text-white font-semibold text-[10px] uppercase tracking-widest flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                        title="Upload Photos to Album"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditAlbum(album);
+                          setExpandedAlbumId(album.id);
+                        }}
+                        disabled={actionLoading}
+                        className="p-2.5 rounded-lg border border-border/5 hover:border-accent hover:text-accent text-gray-400 transition-colors cursor-pointer"
+                        title="Edit Album"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteAlbum(album);
+                        }}
+                        disabled={actionLoading}
+                        className="p-2.5 rounded-lg border border-border/5 hover:border-red-500 hover:text-red-400 text-gray-400 transition-colors cursor-pointer"
+                        title="Delete Album"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <div 
+                        className="chevron-toggle text-gray-500 ml-1 cursor-pointer"
+                        onClick={() => setExpandedAlbumId(isExpanded ? null : album.id)}
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Expanded Details & Photos - Album Details View */}
                 {isExpanded && (
-                  <div className="p-6 border-t border-white/5 bg-[#0a0a0c] flex flex-col gap-6">
+                  <div className="album-expanded-details p-6 border-t border-border/5 bg-[#0a0a0c] flex flex-col gap-6">
                     {/* Inline Album Editor */}
                     {isEditing && (
-                      <form onSubmit={handleUpdateAlbum} className="glass p-5 rounded-xl border border-gold/20 flex flex-col gap-4 bg-[#0e0e11] mb-2">
-                        <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                          <h4 className="text-xs font-semibold text-gold uppercase tracking-widest">Edit Album Details</h4>
+                      <form onSubmit={handleUpdateAlbum} className="glass p-5 rounded-xl border border-accent/20 flex flex-col gap-4 bg-[#0e0e11] mb-2">
+                        <div className="flex justify-between items-center border-b border-border/5 pb-2">
+                          <h4 className="text-xs font-semibold text-accent uppercase tracking-widest">Edit Album Details</h4>
                           <button
                             type="button"
                             onClick={() => setEditingAlbumId(null)}
-                            className="text-[10px] text-gray-400 hover:text-white uppercase tracking-wider"
+                            className="text-[10px] text-gray-400 hover:text-foreground uppercase tracking-wider"
                           >
                             Cancel
                           </button>
@@ -954,7 +1249,7 @@ export default function AdminPortfolioPage() {
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
                               required
-                              className="px-3.5 py-2.5 bg-background border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-gold"
+                              className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent"
                             />
                           </div>
                           <div className="flex flex-col gap-1.5">
@@ -963,7 +1258,7 @@ export default function AdminPortfolioPage() {
                               value={editCategory}
                               onChange={(e) => setEditCategory(e.target.value)}
                               required
-                              className="px-3.5 py-2.5 bg-background border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-gold"
+                              className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent"
                             >
                               {CATEGORIES.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -971,27 +1266,117 @@ export default function AdminPortfolioPage() {
                             </select>
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                          <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] uppercase text-gray-500 font-semibold flex items-center gap-1">
-                              <Upload className="w-3 h-3 text-gold" /> Upload Cover Image *
-                            </label>
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              onChange={handleCoverUpload}
-                              className="px-3.5 py-2 bg-background border border-white/10 rounded-lg text-[10px] text-gray-400 file:bg-gold file:text-black file:border-0 file:rounded file:px-2 file:py-1 cursor-pointer w-full"
-                            />
+                        {/* Responsive Cover Images Group */}
+                        <div className="border-t border-border/5 pt-4 flex flex-col gap-4">
+                          <h5 className="text-[10px] font-semibold text-accent uppercase tracking-widest">Album Cover Styling</h5>
+                          
+                          {/* 1. Default Cover Image (Required Fallback) */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start bg-cardbg/20 p-3 border border-border/5 rounded-xl">
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="text-[10px] uppercase text-gray-500 font-semibold flex items-center gap-1">
+                                <Upload className="w-3 h-3 text-accent" /> Default Cover Image * <span className="text-[8px] text-gray-500 font-normal lowercase">(fallback)</span>
+                              </label>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  onChange={(e) => handleCoverUpload(e, 'standard')}
+                                  className="px-3 py-1.5 bg-background border border-border/10 rounded-lg text-[10px] text-gray-400 file:bg-accent file:text-white file:border-0 file:rounded file:px-2 file:py-1 cursor-pointer w-full"
+                                />
+                                <input
+                                  type="url"
+                                  placeholder="Or paste URL..."
+                                  value={editCoverUrl}
+                                  onChange={(e) => setEditCoverUrl(e.target.value)}
+                                  required
+                                  className="px-3 py-2 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center h-20 border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                              {editCoverUrl ? (
+                                <>
+                                  <img src={editCoverUrl} alt="Default Cover Preview" className="object-cover w-full h-full" />
+                                  <button type="button" onClick={() => setEditCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-[9px] text-gray-500 italic">No image selected</span>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] uppercase text-gray-500 font-semibold">Or Cover Image URL *</label>
-                            <input
-                              type="url"
-                              value={editCoverUrl}
-                              onChange={(e) => setEditCoverUrl(e.target.value)}
-                              required
-                              className="px-3.5 py-2.5 bg-background border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-gold"
-                            />
+
+                          {/* 2. Desktop Cover Image (Optional) */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start bg-cardbg/20 p-3 border border-border/5 rounded-xl">
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="text-[10px] uppercase text-gray-500 font-semibold flex items-center gap-1">
+                                <Upload className="w-3 h-3 text-accent" /> Desktop Cover Image <span className="text-[8px] text-gray-500 font-normal lowercase">(optional)</span>
+                              </label>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  onChange={(e) => handleCoverUpload(e, 'desktop')}
+                                  className="px-3 py-1.5 bg-background border border-border/10 rounded-lg text-[10px] text-gray-400 file:bg-accent file:text-white file:border-0 file:rounded file:px-2 file:py-1 cursor-pointer w-full"
+                                />
+                                <input
+                                  type="url"
+                                  placeholder="Or paste URL..."
+                                  value={editDesktopCoverUrl}
+                                  onChange={(e) => setEditDesktopCoverUrl(e.target.value)}
+                                  className="px-3 py-2 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center h-20 border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                              {editDesktopCoverUrl ? (
+                                <>
+                                  <img src={editDesktopCoverUrl} alt="Desktop Cover Preview" className="object-cover w-full h-full" />
+                                  <button type="button" onClick={() => setEditDesktopCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-[9px] text-gray-500 italic">No image selected</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 3. Mobile Cover Image (Optional) */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start bg-cardbg/20 p-3 border border-border/5 rounded-xl">
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="text-[10px] uppercase text-gray-500 font-semibold flex items-center gap-1">
+                                <Upload className="w-3 h-3 text-accent" /> Mobile Cover Image <span className="text-[8px] text-gray-500 font-normal lowercase">(optional)</span>
+                              </label>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  onChange={(e) => handleCoverUpload(e, 'mobile')}
+                                  className="px-3 py-1.5 bg-background border border-border/10 rounded-lg text-[10px] text-gray-400 file:bg-accent file:text-white file:border-0 file:rounded file:px-2 file:py-1 cursor-pointer w-full"
+                                />
+                                <input
+                                  type="url"
+                                  placeholder="Or paste URL..."
+                                  value={editMobileCoverUrl}
+                                  onChange={(e) => setEditMobileCoverUrl(e.target.value)}
+                                  className="px-3 py-2 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent w-full"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center h-20 border border-border/10 rounded-lg overflow-hidden bg-background relative">
+                              {editMobileCoverUrl ? (
+                                <>
+                                  <img src={editMobileCoverUrl} alt="Mobile Cover Preview" className="object-cover w-full h-full" />
+                                  <button type="button" onClick={() => setEditMobileCoverUrl('')} className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-red-400 hover:text-red-300 cursor-pointer">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-[9px] text-gray-500 italic">No image selected</span>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -1000,13 +1385,13 @@ export default function AdminPortfolioPage() {
                             value={editDescription}
                             onChange={(e) => setEditDescription(e.target.value)}
                             rows={2}
-                            className="px-3.5 py-2.5 bg-background border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-gold resize-none"
+                            className="px-3.5 py-2.5 bg-background border border-border/10 rounded-lg text-xs text-foreground focus:outline-none focus:border-accent resize-none"
                           />
                         </div>
                         <button
                           type="submit"
                           disabled={actionLoading}
-                          className="self-end px-5 py-2.5 rounded-lg bg-gold hover:bg-gold-hover text-black font-semibold text-[10px] uppercase tracking-widest transition-all disabled:opacity-50"
+                          className="self-end px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-white font-semibold text-[10px] uppercase tracking-widest transition-all disabled:opacity-50"
                         >
                           Save Changes
                         </button>
@@ -1014,18 +1399,19 @@ export default function AdminPortfolioPage() {
                     )}
 
                     {/* Photo Add / Bulk Upload Forms */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end bg-[#131317] p-5 rounded-xl border border-white/5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end bg-[#131317] p-5 rounded-xl border border-border/5">
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold flex items-center gap-1.5">
-                          <Upload className="w-3.5 h-3.5 text-gold" /> Upload New Photos (Bulk Supported)
+                          <Upload className="w-3.5 h-3.5 text-accent" /> Upload New Photos (Bulk Supported)
                         </label>
                         <input
+                          id={`file-upload-${album.id}`}
                           type="file"
                           multiple
                           accept="image/jpeg,image/png,image/webp"
                           onChange={(e) => handleBulkPhotoUpload(e, album.id, album.photos)}
                           disabled={actionLoading}
-                          className="px-3.5 py-2 bg-background border border-white/10 rounded-lg text-gray-400 text-[10px] focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-gold file:text-black hover:file:bg-gold-hover cursor-pointer w-full"
+                          className="px-3.5 py-2 bg-background border border-border/10 rounded-lg text-gray-400 text-[10px] focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
                         />
                       </div>
 
@@ -1039,12 +1425,12 @@ export default function AdminPortfolioPage() {
                             placeholder="https://..."
                             value={photoUrlInput[album.id] || ''}
                             onChange={(e) => handlePhotoUrlChange(album.id, e.target.value)}
-                            className="px-3.5 py-2 bg-background border border-white/10 rounded-lg text-white text-xs focus:border-gold focus:outline-none w-full"
+                            className="px-3.5 py-2 bg-background border border-border/10 rounded-lg text-foreground text-xs focus:border-accent focus:outline-none w-full"
                           />
                           <button
                             onClick={() => handleAddPhoto(album.id)}
                             disabled={actionLoading || !photoUrlInput[album.id]?.trim()}
-                            className="px-4 py-2.5 rounded-lg bg-gold hover:bg-gold-hover text-black font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shrink-0"
+                            className="px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-white font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shrink-0"
                           >
                             <Plus className="w-3 h-3" /> Add
                           </button>
@@ -1067,7 +1453,7 @@ export default function AdminPortfolioPage() {
                               onDragOver={handleDragOver}
                               onDragEnd={handleDragEnd}
                               onDrop={(e) => handleDrop(e, album.id, index)}
-                              className="relative group rounded-lg overflow-hidden border border-white/5 h-28 cursor-grab active:cursor-grabbing hover:border-gold/30 transition-all bg-[#08080a]"
+                              className="relative group rounded-lg overflow-hidden border border-border/5 h-28 cursor-grab active:cursor-grabbing hover:border-accent/30 transition-all bg-[#08080a]"
                             >
                               <Image
                                 src={photo.image_url}
@@ -1079,7 +1465,7 @@ export default function AdminPortfolioPage() {
                               {/* Hover actions overlay */}
                               <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-2">
                                 <div className="flex items-center justify-between w-full">
-                                  <span className="text-[8px] px-1.5 py-0.5 rounded bg-black/50 text-gold font-mono">
+                                  <span className="text-[8px] px-1.5 py-0.5 rounded bg-black/50 text-accent font-mono">
                                     #{photo.display_order || index + 1}
                                   </span>
                                   <Move className="w-3.5 h-3.5 text-gray-500" />
@@ -1089,7 +1475,7 @@ export default function AdminPortfolioPage() {
                                   <button
                                     onClick={() => handleMovePhoto(album, index, 'up')}
                                     disabled={index === 0 || actionLoading}
-                                    className="p-1.5 rounded bg-white/10 text-white hover:text-gold transition-colors disabled:opacity-30"
+                                    className="p-1.5 rounded bg-background/10 text-foreground hover:text-accent transition-colors disabled:opacity-30"
                                     title="Move Left"
                                   >
                                     <ArrowUp className="w-3.5 h-3.5" />
@@ -1097,7 +1483,7 @@ export default function AdminPortfolioPage() {
                                   <button
                                     onClick={() => handleMovePhoto(album, index, 'down')}
                                     disabled={index === album.photos.length - 1 || actionLoading}
-                                    className="p-1.5 rounded bg-white/10 text-white hover:text-gold transition-colors disabled:opacity-30"
+                                    className="p-1.5 rounded bg-background/10 text-foreground hover:text-accent transition-colors disabled:opacity-30"
                                     title="Move Right"
                                   >
                                     <ArrowDown className="w-3.5 h-3.5" />
@@ -1105,8 +1491,8 @@ export default function AdminPortfolioPage() {
                                   <button
                                     onClick={() => handleSetCoverImage(album.id, photo.image_url)}
                                     disabled={actionLoading || album.cover_image === photo.image_url}
-                                    className={`p-1.5 rounded bg-white/10 transition-colors ${
-                                      album.cover_image === photo.image_url ? 'text-gold' : 'text-white hover:text-gold'
+                                    className={`p-1.5 rounded bg-background/10 transition-colors ${
+                                      album.cover_image === photo.image_url ? 'text-accent' : 'text-foreground hover:text-accent'
                                     }`}
                                     title="Set as Album Cover"
                                   >
@@ -1119,7 +1505,7 @@ export default function AdminPortfolioPage() {
                                     href={photo.image_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-1.5 rounded bg-white/10 text-white hover:text-blue-400 transition-colors"
+                                    className="p-1.5 rounded bg-background/10 text-foreground hover:text-blue-400 transition-colors"
                                     title="Open Link"
                                   >
                                     <Link2 className="w-3.5 h-3.5" />
@@ -1127,7 +1513,7 @@ export default function AdminPortfolioPage() {
                                   <button
                                     onClick={() => handleDeletePhoto(photo)}
                                     disabled={actionLoading}
-                                    className="p-1.5 rounded bg-white/10 text-white hover:text-red-400 transition-colors"
+                                    className="p-1.5 rounded bg-background/10 text-foreground hover:text-red-400 transition-colors"
                                     title="Delete Photo"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -1147,11 +1533,28 @@ export default function AdminPortfolioPage() {
             );
           })
         ) : (
-          <div className="py-20 text-center text-gray-500 font-serif font-light glass rounded-3xl border border-white/5 bg-[#0e0e11]">
+          <div className="py-20 text-center text-gray-500 font-serif font-light glass rounded-3xl border border-border/5 bg-[#0e0e11]">
             No portfolio albums created yet. Click "Create Album" above to start.
           </div>
         )}
       </div>
+
+      {/* Drag & Drop Debug Console (Visible in Demo Admin Mode for easy remote diagnostics) */}
+      {debugLogs.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 p-4 bg-black/95 border border-[#9D6638]/40 rounded-xl text-[10px] font-mono text-stone-300 w-80 shadow-2xl flex flex-col gap-2 pointer-events-none">
+          <div className="flex justify-between items-center border-b border-white/10 pb-1.5 font-bold uppercase tracking-wider text-accent text-[9px]">
+            <span>Drag & Drop Diagnostics</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+            {debugLogs.map((log, idx) => (
+              <div key={idx} className="border-b border-white/5 pb-1 last:border-0 leading-tight">
+                {log}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

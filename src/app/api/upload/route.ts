@@ -16,15 +16,36 @@ export async function POST(request: NextRequest) {
     // 1. Verify Authentication & Admin Role
     console.info('[Upload Trace] Step 1: Before authentication check');
     
-    const serverSupabase = await createServerClient();
-    const { data: { user } } = await serverSupabase.auth.getUser();
+    const isDemoMode = process.env.DEMO_ADMIN_MODE === 'true';
+    let user = null;
 
-    console.info(`[Upload Trace] Step 2: After authentication check. Authenticated user: ${user?.email || 'None'}`);
+    if (isDemoMode) {
+      // DEMO ONLY: Mock demo admin user for local review and upload preview.
+      user = { id: 'demo-admin-id', email: 'demo@admin.local' };
+      console.info('[Upload Bypass] Demo Admin Mode active. Bypassing authentication.');
+    } else {
+      const serverSupabase = await createServerClient();
+      const { data: { user: authUser } } = await serverSupabase.auth.getUser();
+      user = authUser;
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@aurastudio.in';
-    if (!user || user.email !== adminEmail) {
-      console.warn(`[Unauthorized Upload Attempt] User: ${user?.email || 'Anonymous'}`);
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      console.info(`[Upload Trace] Step 2: After authentication check. Authenticated user: ${user?.email || 'None'}`);
+
+      if (!user) {
+        console.warn('[Unauthorized Upload Attempt] User is anonymous.');
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
+
+      // Verify user is registered in the admins table
+      const { data: adminData, error: adminErr } = await serverSupabase
+        .from('admins')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (adminErr || !adminData) {
+        console.warn(`[Unauthorized Upload Attempt] User: ${user.email} is not in the admins table.`);
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
     }
 
     // 2. Parse Multipart Form Data
@@ -109,22 +130,42 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   console.log("DELETE ROUTE HIT");
   try {
-    // 1. Verify Authentication & Admin Role
-    const serverSupabase = await createServerClient();
-    const { data: { user } } = await serverSupabase.auth.getUser();
+    const isDemoMode = process.env.DEMO_ADMIN_MODE === 'true';
+    let user = null;
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@aurastudio.in';
-    if (!user || user.email !== adminEmail) {
-      console.warn(`[Unauthorized Delete Attempt] User: ${user?.email || 'Anonymous'}`);
-      return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+    if (isDemoMode) {
+      // DEMO ONLY: Mock demo admin user for local delete preview.
+      user = { id: 'demo-admin-id', email: 'demo@admin.local' };
+      console.info('[Delete Bypass] Demo Admin Mode active. Bypassing authentication.');
+    } else {
+      const serverSupabase = await createServerClient();
+      const { data: { user: authUser } } = await serverSupabase.auth.getUser();
+      user = authUser;
+
+      if (!user) {
+        console.warn('[Unauthorized Delete Attempt] User is anonymous.');
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
+
+      // Verify user is registered in the admins table
+      const { data: adminData, error: adminErr } = await serverSupabase
+        .from('admins')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (adminErr || !adminData) {
+        console.warn(`[Unauthorized Delete Attempt] User: ${user.email} is not in the admins table.`);
+        return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
+      }
     }
 
     // 2. Parse request query params
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get('bucket');
-    const fileName = searchParams.get('filename');
+    const fileNames = searchParams.getAll('filename');
 
-    if (!bucket || !fileName) {
+    if (!bucket || fileNames.length === 0) {
       return NextResponse.json({ error: 'Missing bucket or filename parameters.' }, { status: 400 });
     }
 
@@ -145,17 +186,14 @@ export async function DELETE(request: NextRequest) {
       auth: { persistSession: false }
     });
 
-    console.info(`[Delete Trace] Deleting file from storage: ${bucket}/${fileName}`);
+    console.info(`[Delete Trace] Deleting files from storage: ${bucket}/${fileNames.join(', ')}`);
 
-    const filename = fileName;
-    const filePath = filename;
-
-    // 4. Delete file from storage
+    // 4. Delete files from storage
     const { data: result, error } = await adminSupabase.storage
       .from(bucket)
-      .remove([filename]);
+      .remove(fileNames);
 
-    console.log("Deleting:", filePath);
+    console.log("Deleting:", fileNames);
     console.log("Delete Result:", result);
     console.log("Delete Error:", error);
 
@@ -164,7 +202,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to delete file from storage.', details: error }, { status: 500 });
     }
 
-    console.info(`[Delete Success] File deleted successfully from ${bucket}/${filename}`);
+    console.info(`[Delete Success] Files deleted successfully from ${bucket}/${fileNames.join(', ')}`);
     return NextResponse.json({ success: true, deleted: result }, { status: 200 });
 
   } catch (err) {

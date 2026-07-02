@@ -1,21 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #070708;
-  --foreground: #f3f4f6;
-  --card: #121214;
-  --card-foreground: #f3f4f6;
-  --border: #1f1f23;
-  --gold: #d4af37;
-  --gold-hover: #bda02b;
+  --background: #f5f5f7; /* Page background */
+  --foreground: #414538; /* Body text */
+  --walnut: #4E220F; /* Primary dark */
+  --terracotta: #4E220F; /* Accent */
+  --sage: #B0BA99; /* Secondary accent */
+  --card-bg: #FCF8EC; /* Card background */
+  --border: #9D6638; /* Borders */
+  --lavender: #5b4daa; /* Dark Lavender */
+  --gold: #9D6638; /* Map old gold to terracotta for fallback */
+  --gold-hover: #4E220F; /* Hover state */
+  --accent-hover: #692F16; /* Hover state for accent */
+
+  /* Responsive hamburger offsets */
+  --line-y-top: -5px;
+  --line-y-bottom: 5px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --line-y-top: -7px;
+    --line-y-bottom: 7px;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--terracotta);
+  --color-accent-hover: var(--accent-hover);
   --color-border: var(--border);
+  --color-walnut: var(--walnut);
+  --color-terracotta: var(--terracotta);
+  --color-sage: var(--sage);
+  --color-cardbg: var(--card-bg);
+  --color-lavender: var(--lavender);
   --color-gold: var(--gold);
   --color-gold-hover: var(--gold-hover);
   --font-serif: var(--font-cormorant);
@@ -30,20 +50,209 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbar */
+/* Hide scrollbar globally */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none !important;
 }
-::-webkit-scrollbar-track {
-  background: #070708;
+html, body {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
 }
-::-webkit-scrollbar-thumb {
-  background: #1f1f23;
-  border-radius: 4px;
+
+/* Restore custom styled scrollbar specifically for the admin layout and dashboard panes (Light & Sharp) */
+.admin-layout-wrapper *::-webkit-scrollbar,
+.admin-layout-wrapper::-webkit-scrollbar {
+  display: block !important;
+  width: 6px !important;
+  height: 6px !important;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #d4af37;
+.admin-layout-wrapper *::-webkit-scrollbar-track,
+.admin-layout-wrapper::-webkit-scrollbar-track {
+  background: rgba(157, 102, 56, 0.05) !important;
 }
+.admin-layout-wrapper *::-webkit-scrollbar-thumb,
+.admin-layout-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(157, 102, 56, 0.25) !important;
+  border-radius: 0px !important;
+}
+.admin-layout-wrapper *::-webkit-scrollbar-thumb:hover,
+.admin-layout-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 102, 56, 0.5) !important;
+}
+.admin-layout-wrapper * {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(157, 102, 56, 0.25) rgba(157, 102, 56, 0.05) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ADMIN DASHBOARD LIGHT THEME OVERRIDES (WITH SHARP CORNERS)
+   ────────────────────────────────────────────────────────────────────────── */
+.admin-layout-wrapper {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Add moderate corner radius to components in the admin dashboard (excluding menu/sidebar) */
+.admin-layout-wrapper .glass,
+.admin-layout-wrapper .glass-dark-warm,
+.admin-layout-wrapper input,
+.admin-layout-wrapper select,
+.admin-layout-wrapper textarea,
+.admin-layout-wrapper button:not(aside button),
+.admin-layout-wrapper a[class*="px-"]:not(aside a):not(header a),
+.admin-layout-wrapper a[class*="py-"]:not(aside a):not(header a),
+.admin-layout-wrapper form,
+.admin-layout-wrapper section,
+.admin-layout-wrapper div[class*="rounded-"]:not(aside div):not(header div),
+.admin-layout-wrapper div[class*="bg-cardbg"]:not(aside div) {
+  border-radius: 12px !important;
+}
+
+/* Force all corners in sidebar and header menus to be completely sharp */
+.admin-layout-wrapper aside,
+.admin-layout-wrapper header,
+.admin-layout-wrapper aside *,
+.admin-layout-wrapper header * {
+  border-radius: 0px !important;
+}
+
+/* Card backgrounds and glass panels */
+.admin-layout-wrapper .glass,
+.admin-layout-wrapper .glass-dark-warm {
+  background: rgba(252, 248, 236, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(157, 102, 56, 0.15) !important;
+}
+
+/* Dark color background resets to light palette */
+.admin-layout-wrapper .bg-\[\#0e0e11\],
+.admin-layout-wrapper .bg-\[\#0c0604\],
+.admin-layout-wrapper .bg-\[\#0c0604\]\/25,
+.admin-layout-wrapper .bg-\[\#0c0604\]\/40,
+.admin-layout-wrapper .bg-\[\#0c0604\]\/45,
+.admin-layout-wrapper .bg-\[\#131317\],
+.admin-layout-wrapper .bg-\[\#0a0a0c\],
+.admin-layout-wrapper .bg-\[\#08080a\] {
+  background-color: var(--background) !important;
+}
+
+/* Mobile header and sidebars use a dark background */
+.admin-layout-wrapper .bg-\[\#130a07\],
+.admin-layout-wrapper aside,
+.admin-layout-wrapper header {
+  background-color: #130a07 !important; /* Dark theme for the side menu */
+  border-color: rgba(157, 102, 56, 0.15) !important;
+}
+
+.admin-layout-wrapper .bg-cardbg\/30,
+.admin-layout-wrapper .bg-cardbg\/40,
+.admin-layout-wrapper .bg-cardbg\/55 {
+  background-color: rgba(252, 248, 236, 0.55) !important;
+}
+
+/* Form input, select, and textarea overrides */
+.admin-layout-wrapper input[type="text"],
+.admin-layout-wrapper input[type="email"],
+.admin-layout-wrapper input[type="tel"],
+.admin-layout-wrapper input[type="url"],
+.admin-layout-wrapper input[type="date"],
+.admin-layout-wrapper input[type="number"],
+.admin-layout-wrapper select,
+.admin-layout-wrapper textarea {
+  background-color: rgba(252, 248, 236, 0.85) !important;
+  color: var(--foreground) !important;
+  border: 1px solid rgba(157, 102, 56, 0.25) !important;
+}
+.admin-layout-wrapper input:focus,
+.admin-layout-wrapper select:focus,
+.admin-layout-wrapper textarea:focus {
+  border-color: var(--terracotta) !important;
+  outline: none !important;
+}
+.admin-layout-wrapper ::placeholder {
+  color: rgba(65, 69, 56, 0.45) !important;
+}
+
+/* Sidebar Link & Text styles for the Dark Menu */
+.admin-layout-wrapper aside a,
+.admin-layout-wrapper aside span,
+.admin-layout-wrapper aside p,
+.admin-layout-wrapper header a,
+.admin-layout-wrapper header span {
+  color: #e5e7eb !important;
+}
+.admin-layout-wrapper aside nav a:not([class*="bg-accent"]):not([class*="bg-gradient-to-r"]) {
+  color: #9ca3af !important;
+}
+.admin-layout-wrapper aside nav a:not([class*="bg-accent"]):not([class*="bg-gradient-to-r"]):hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.admin-layout-wrapper aside button[class*="text-red-600"] {
+  color: #f87171 !important;
+}
+.admin-layout-wrapper aside button[class*="text-red-600"]:hover {
+  background-color: rgba(248, 113, 113, 0.1) !important;
+  color: #fca5a5 !important;
+}
+.admin-layout-wrapper aside .text-accent,
+.admin-layout-wrapper header .text-accent {
+  color: var(--terracotta) !important;
+}
+
+
+/* Text color fixes to resolve light-on-light */
+.admin-layout-wrapper .text-white,
+.admin-layout-wrapper .text-stone-100,
+.admin-layout-wrapper .text-stone-200 {
+  color: var(--foreground) !important;
+}
+
+.admin-layout-wrapper .text-stone-300,
+.admin-layout-wrapper .text-stone-400,
+.admin-layout-wrapper .text-gray-300,
+.admin-layout-wrapper .text-gray-400 {
+  color: rgba(65, 69, 56, 0.85) !important;
+}
+
+.admin-layout-wrapper .text-stone-500,
+.admin-layout-wrapper .text-gray-500 {
+  color: rgba(65, 69, 56, 0.6) !important;
+}
+
+/* Buttons and primary CTA text color fixes */
+.admin-layout-wrapper button.bg-accent,
+.admin-layout-wrapper a.bg-accent,
+.admin-layout-wrapper .bg-gradient-to-r {
+  color: #ffffff !important;
+  background-image: none !important;
+  background-color: var(--terracotta) !important;
+}
+.admin-layout-wrapper button.bg-accent:hover,
+.admin-layout-wrapper a.bg-accent:hover {
+  background-color: var(--accent-hover) !important;
+}
+
+/* Dropzone borders and drop state */
+.admin-layout-wrapper .border-dashed {
+  border-color: rgba(157, 102, 56, 0.25) !important;
+}
+.admin-layout-wrapper .border-dashed:hover {
+  border-color: var(--terracotta) !important;
+}
+.admin-layout-wrapper .bg-accent\/5 {
+  background-color: rgba(157, 102, 56, 0.05) !important;
+}
+
+/* Toast styling override to ensure text readability */
+.admin-layout-wrapper [class*="toast"],
+.admin-layout-wrapper [class*="Toast"] {
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
+  border: 1px solid rgba(157, 102, 56, 0.2) !important;
+}
+
 
 /* Glassmorphism utility */
 .glass {
@@ -51,6 +260,33 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Warm Light Glassmorphism utility */
+.glass-light {
+  background: rgba(252, 248, 236, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(157, 102, 56, 0.15);
+}
+
+/* Warm Dark Glassmorphism utility */
+.glass-dark-warm {
+  background: rgba(22, 11, 7, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(157, 102, 56, 0.12);
+}
+
+/* Ambient Glow Blobs */
+.bg-glow-accent {
+  background: radial-gradient(circle, rgba(78, 34, 15, 0.06) 0%, transparent 70%);
+}
+.bg-glow-accent-strong {
+  background: radial-gradient(circle, rgba(157, 102, 56, 0.12) 0%, transparent 75%);
+}
+.bg-glow-sage {
+  background: radial-gradient(circle, rgba(176, 186, 153, 0.08) 0%, transparent 70%);
 }
 
 /* Cinematic text shine */
@@ -74,3 +310,121 @@ body {
     background-position: 200% center;
   }
 }
+
+  /* ── Mobile Landscape (Low-Height Viewport) Optimization ── */
+
+  /* Override default white text to use lavender */
+  .text-foreground { color: var(--foreground); }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 1. Header / Navbar compact layout */
+  .hero-section {
+    min-height: auto !important;
+    padding-top: 6rem !important;
+  }
+  header.fixed {
+    top: 0.5rem !important;
+  }
+  header.fixed > div {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+    border-radius: 9999px !important;
+  }
+
+  /* 2. Mobile Menu Overlay vertical scrolling and compact padding */
+  .mobile-nav-overlay {
+    justify-content: flex-start !important;
+    padding-top: clamp(4.5rem, 18vh, 6.5rem) !important;
+    padding-bottom: 2rem !important;
+    overflow-y: auto !important;
+    height: 100dvh !important;
+  }
+  .mobile-nav-list {
+    gap: 0.6rem !important;
+  }
+  .mobile-nav-list a {
+    font-size: 1.25rem !important;
+    line-height: 1.5rem !important;
+  }
+  .mobile-nav-btn {
+    margin-top: 0.5rem !important;
+  }
+  .mobile-nav-btn a {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* 3. Curved Hero Overlay curve dimensions */
+  .hero-arch-top {
+    top: -38% !important;
+    width: 170% !important;
+    height: 52% !important;
+    border-radius: 50% !important;
+  }
+  .hero-arch-bottom {
+    bottom: -32% !important;
+    width: 170% !important;
+    height: 52% !important;
+    border-radius: 50% !important;
+  }
+
+  /* 4. Carousel Scroll Container Translation */
+  .hero-scroll-container {
+    transform: translateY(12px) !important;
+  }
+
+  /* 5. Carousel Cards height & aspect-ratio */
+  .hero-carousel-card {
+    height: clamp(150px, 50vh, 210px) !important;
+    width: auto !important;
+    aspect-ratio: 1.35 / 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 6. Section Vertical Spacing (excessive whitespace reduction) */
+  .home-section {
+    padding-top: clamp(2.5rem, 9vh, 3.5rem) !important;
+    padding-bottom: clamp(2.5rem, 9vh, 3.5rem) !important;
+  }
+  .page-container {
+    padding-top: clamp(4.5rem, 16vh, 6rem) !important;
+    padding-bottom: clamp(2rem, 8vh, 3.5rem) !important;
+  }
+
+  /* 7. Image Box Heights & Collages scaling */
+  .intro-collage-container,
+  .portfolio-card,
+  .portfolio-grid-card,
+  .about-story-image,
+  .about-founder-image,
+  .service-cover-image {
+    height: clamp(180px, 58vh, 260px) !important;
+  }
+
+  /* 8. Margin adjustments for layout elements */
+  .mb-28, .mb-20, .mb-16 {
+    margin-bottom: clamp(1.5rem, 6vh, 3rem) !important;
+  }
+
+  /* 9. Heading Typography scaling */
+  h1 {
+    font-size: clamp(1.8rem, 8vh, 2.6rem) !important;
+    line-height: 1.15 !important;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 6vh, 2rem) !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+

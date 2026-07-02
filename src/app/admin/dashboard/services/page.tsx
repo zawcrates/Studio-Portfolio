@@ -447,7 +447,7 @@ export default function AdminServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -457,7 +457,7 @@ export default function AdminServicesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-white font-light">Services Management</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-light">Services Management</h1>
           <p className="text-sm text-gray-500 mt-1.5 font-light">
             Create, edit, and delete photography and cinematography service packages.
           </p>
@@ -467,7 +467,7 @@ export default function AdminServicesPage() {
             setShowCreateForm(!showCreateForm);
             setEditingServiceId(null);
           }}
-          className="px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
+          className="px-5 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shrink-0 w-full sm:w-auto justify-center"
         >
           <Plus className="w-4 h-4" /> {showCreateForm ? 'Cancel Form' : 'Create Service'}
         </button>
@@ -490,8 +490,8 @@ export default function AdminServicesPage() {
 
       {/* Create Service Form */}
       {showCreateForm && (
-        <form onSubmit={handleCreateService} className="glass p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col gap-5 bg-[#0e0e11]">
-          <h2 className="font-serif text-xl text-white font-light border-b border-white/5 pb-3">New Service Package</h2>
+        <form onSubmit={handleCreateService} className="glass p-6 sm:p-8 rounded-2xl border border-border/5 flex flex-col gap-5 bg-[#0e0e11]">
+          <h2 className="font-serif text-xl text-foreground font-light border-b border-border/5 pb-3">New Service Package</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
@@ -505,7 +505,7 @@ export default function AdminServicesPage() {
                 value={newTitle}
                 onChange={(e) => handleTitleChange(e.target.value, false)}
                 required
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -519,8 +519,8 @@ export default function AdminServicesPage() {
                 value={newSlug}
                 onChange={(e) => setNewSlug(slugify(e.target.value))}
                 required
-                className={`px-4 py-3 bg-background border rounded-xl text-white text-sm focus:outline-none transition-colors w-full font-mono ${
-                  services.some(s => s.slug === newSlug) ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-gold'
+                className={`px-4 py-3 bg-background border rounded-xl text-foreground text-sm focus:outline-none transition-colors w-full font-mono ${
+                  services.some(s => s.slug === newSlug) ? 'border-red-500/50 focus:border-red-500' : 'border-border/10 focus:border-accent'
                 }`}
               />
               {newSlug && services.some(s => s.slug === newSlug) && (
@@ -540,7 +540,7 @@ export default function AdminServicesPage() {
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               required
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
             />
           </div>
 
@@ -555,7 +555,7 @@ export default function AdminServicesPage() {
               value={newLongDescription}
               onChange={(e) => setNewLongDescription(e.target.value)}
               required
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors resize-none w-full"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors resize-none w-full"
             />
           </div>
 
@@ -563,14 +563,14 @@ export default function AdminServicesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
             <div className="flex flex-col gap-2">
               <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
-                <Upload className="w-3.5 h-3.5 text-gold" /> Upload Cover Image *
+                <Upload className="w-3.5 h-3.5 text-accent" /> Upload Cover Image *
               </label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => handleImageUpload(e, false)}
                 disabled={actionLoading}
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-black hover:file:bg-gold-hover cursor-pointer w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
               />
             </div>
 
@@ -586,7 +586,7 @@ export default function AdminServicesPage() {
                   value={newCoverUrl}
                   onChange={(e) => setNewCoverUrl(e.target.value)}
                   required
-                  className="px-4 py-3 pr-10 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+                  className="px-4 py-3 pr-10 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
                 />
                 <Link2 className="w-4 h-4 text-gray-500 absolute right-3.5 pointer-events-none" />
               </div>
@@ -595,7 +595,7 @@ export default function AdminServicesPage() {
 
           {/* Preview uploaded image */}
           {newCoverUrl && (
-            <div className="relative w-full h-40 sm:h-52 rounded-xl overflow-hidden border border-white/10">
+            <div className="relative w-full h-40 sm:h-52 rounded-xl overflow-hidden border border-border/10">
               <Image src={newCoverUrl} alt="Cover Preview" fill className="object-cover" />
             </div>
           )}
@@ -612,12 +612,12 @@ export default function AdminServicesPage() {
                 value={featureInput}
                 onChange={(e) => setFeatureInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature(e as any))}
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors flex-grow"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors flex-grow"
               />
               <button
                 type="button"
                 onClick={handleAddFeature}
-                className="px-4 py-3 bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase rounded-xl transition-all"
+                className="px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase rounded-xl transition-all"
               >
                 Add
               </button>
@@ -625,14 +625,14 @@ export default function AdminServicesPage() {
             {newFeatures.length > 0 ? (
               <ul className="flex flex-col gap-2 mt-1 max-w-xl">
                 {newFeatures.map((feat, idx) => (
-                  <li key={idx} className="flex items-center justify-between gap-3 px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-xs">
+                  <li key={idx} className="flex items-center justify-between gap-3 px-4 py-2.5 bg-background/5 border border-border/10 text-foreground rounded-xl text-xs">
                     <span className="truncate">{feat}</span>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button 
                         type="button" 
                         onClick={() => moveFeatureUp(idx)} 
                         disabled={idx === 0}
-                        className="p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-foreground disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -641,7 +641,7 @@ export default function AdminServicesPage() {
                         type="button" 
                         onClick={() => moveFeatureDown(idx)} 
                         disabled={idx === newFeatures.length - 1}
-                        className="p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-foreground disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -649,7 +649,7 @@ export default function AdminServicesPage() {
                       <button 
                         type="button" 
                         onClick={() => handleRemoveFeature(idx)} 
-                        className="p-1 text-red-400 hover:text-red-300 ml-1 border-l border-white/10 pl-2 transition-colors"
+                        className="p-1 text-red-400 hover:text-red-300 ml-1 border-l border-border/10 pl-2 transition-colors"
                         title="Remove deliverable"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -666,7 +666,7 @@ export default function AdminServicesPage() {
           <button
             type="submit"
             disabled={actionLoading || !newCoverUrl}
-            className="self-end px-8 py-3 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
+            className="self-end px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
           >
             Create Service
           </button>
@@ -675,15 +675,15 @@ export default function AdminServicesPage() {
 
       {/* Edit Service Form */}
       {editingServiceId && (
-        <form onSubmit={handleUpdateService} className="glass p-6 sm:p-8 rounded-2xl border border-gold/30 flex flex-col gap-5 bg-[#0e0e11] relative">
+        <form onSubmit={handleUpdateService} className="glass p-6 sm:p-8 rounded-2xl border border-accent/30 flex flex-col gap-5 bg-[#0e0e11] relative">
           <button 
             type="button" 
             onClick={() => setEditingServiceId(null)} 
-            className="absolute top-6 right-6 text-gray-400 hover:text-white"
+            className="absolute top-6 right-6 text-gray-400 hover:text-foreground"
           >
             <X className="w-5 h-5" />
           </button>
-          <h2 className="font-serif text-xl text-gold font-light border-b border-white/5 pb-3">Edit Service</h2>
+          <h2 className="font-serif text-xl text-accent font-light border-b border-border/5 pb-3">Edit Service</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
@@ -696,7 +696,7 @@ export default function AdminServicesPage() {
                 value={editTitle}
                 onChange={(e) => handleTitleChange(e.target.value, true)}
                 required
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -709,8 +709,8 @@ export default function AdminServicesPage() {
                 value={editSlug}
                 onChange={(e) => setEditSlug(slugify(e.target.value))}
                 required
-                className={`px-4 py-3 bg-background border rounded-xl text-white text-sm focus:outline-none transition-colors w-full font-mono ${
-                  services.some(s => s.slug === editSlug && s.id !== editingServiceId) ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-gold'
+                className={`px-4 py-3 bg-background border rounded-xl text-foreground text-sm focus:outline-none transition-colors w-full font-mono ${
+                  services.some(s => s.slug === editSlug && s.id !== editingServiceId) ? 'border-red-500/50 focus:border-red-500' : 'border-border/10 focus:border-accent'
                 }`}
               />
               {editSlug && services.some(s => s.slug === editSlug && s.id !== editingServiceId) && (
@@ -729,7 +729,7 @@ export default function AdminServicesPage() {
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
               required
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
             />
           </div>
 
@@ -743,7 +743,7 @@ export default function AdminServicesPage() {
               value={editLongDescription}
               onChange={(e) => setEditLongDescription(e.target.value)}
               required
-              className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors resize-none w-full"
+              className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors resize-none w-full"
             />
           </div>
 
@@ -751,14 +751,14 @@ export default function AdminServicesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
             <div className="flex flex-col gap-2">
               <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold flex items-center gap-1.5">
-                <Upload className="w-3.5 h-3.5 text-gold" /> Upload New Cover Image
+                <Upload className="w-3.5 h-3.5 text-accent" /> Upload New Cover Image
               </label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => handleImageUpload(e, true)}
                 disabled={actionLoading}
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-black hover:file:bg-gold-hover cursor-pointer w-full"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-gray-400 text-xs focus:outline-none file:mr-4 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover cursor-pointer w-full"
               />
             </div>
 
@@ -773,7 +773,7 @@ export default function AdminServicesPage() {
                   value={editCoverUrl}
                   onChange={(e) => setEditCoverUrl(e.target.value)}
                   required
-                  className="px-4 py-3 pr-10 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors w-full"
+                  className="px-4 py-3 pr-10 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors w-full"
                 />
                 <Link2 className="w-4 h-4 text-gray-500 absolute right-3.5 pointer-events-none" />
               </div>
@@ -782,7 +782,7 @@ export default function AdminServicesPage() {
 
           {/* Preview updated image */}
           {editCoverUrl && (
-            <div className="relative w-full h-40 sm:h-52 rounded-xl overflow-hidden border border-white/10">
+            <div className="relative w-full h-40 sm:h-52 rounded-xl overflow-hidden border border-border/10">
               <Image src={editCoverUrl} alt="Cover Preview" fill className="object-cover" />
             </div>
           )}
@@ -799,12 +799,12 @@ export default function AdminServicesPage() {
                 value={editFeatureInput}
                 onChange={(e) => setEditFeatureInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddEditFeature(e as any))}
-                className="px-4 py-3 bg-background border border-white/10 rounded-xl text-white text-sm focus:border-gold focus:outline-none transition-colors flex-grow"
+                className="px-4 py-3 bg-background border border-border/10 rounded-xl text-foreground text-sm focus:border-accent focus:outline-none transition-colors flex-grow"
               />
               <button
                 type="button"
                 onClick={handleAddEditFeature}
-                className="px-4 py-3 bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase rounded-xl transition-all"
+                className="px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase rounded-xl transition-all"
               >
                 Add
               </button>
@@ -812,14 +812,14 @@ export default function AdminServicesPage() {
             {editFeatures.length > 0 ? (
               <ul className="flex flex-col gap-2 mt-1 max-w-xl">
                 {editFeatures.map((feat, idx) => (
-                  <li key={idx} className="flex items-center justify-between gap-3 px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-xs">
+                  <li key={idx} className="flex items-center justify-between gap-3 px-4 py-2.5 bg-background/5 border border-border/10 text-foreground rounded-xl text-xs">
                     <span className="truncate">{feat}</span>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button 
                         type="button" 
                         onClick={() => moveEditFeatureUp(idx)} 
                         disabled={idx === 0}
-                        className="p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-foreground disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -828,7 +828,7 @@ export default function AdminServicesPage() {
                         type="button" 
                         onClick={() => moveEditFeatureDown(idx)} 
                         disabled={idx === editFeatures.length - 1}
-                        className="p-1 text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-foreground disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -836,7 +836,7 @@ export default function AdminServicesPage() {
                       <button 
                         type="button" 
                         onClick={() => handleRemoveEditFeature(idx)} 
-                        className="p-1 text-red-400 hover:text-red-300 ml-1 border-l border-white/10 pl-2 transition-colors"
+                        className="p-1 text-red-400 hover:text-red-300 ml-1 border-l border-border/10 pl-2 transition-colors"
                         title="Remove deliverable"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -854,14 +854,14 @@ export default function AdminServicesPage() {
             <button
               type="button"
               onClick={() => setEditingServiceId(null)}
-              className="px-6 py-3 rounded-xl border border-white/10 text-white font-semibold text-xs uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-6 py-3 rounded-xl border border-border/10 text-foreground font-semibold text-xs uppercase tracking-widest hover:bg-background/5 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={actionLoading || !editCoverUrl}
-              className="px-8 py-3 rounded-xl bg-gold hover:bg-gold-hover text-black font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
+              className="px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-white font-semibold text-xs uppercase tracking-widest transition-colors duration-300 disabled:opacity-50"
             >
               Save Changes
             </button>
@@ -880,16 +880,16 @@ export default function AdminServicesPage() {
               <div 
                 key={service.id} 
                 className={`glass rounded-2xl border transition-colors duration-300 overflow-hidden flex flex-col bg-[#0e0e11] ${
-                  isEditing ? 'border-gold/30' : 'border-white/5'
+                  isEditing ? 'border-accent/30' : 'border-border/5'
                 }`}
               >
                 {/* Accordion Trigger Header */}
                 <div 
                   onClick={() => setExpandedServiceId(isExpanded ? null : service.id)}
-                  className="p-6 flex items-center justify-between gap-6 cursor-pointer hover:bg-white/[0.01] transition-colors"
+                  className="p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 cursor-pointer hover:bg-background/[0.01] transition-colors"
                 >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                  <div className="flex items-center gap-4 min-w-0 w-full sm:w-auto">
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-border/10 shrink-0">
                       <Image
                         src={service.cover_image}
                         alt={service.title}
@@ -897,10 +897,10 @@ export default function AdminServicesPage() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="font-serif text-lg text-white font-light truncate">{service.title}</h3>
+                    <div className="min-w-0 flex-grow">
+                      <h3 className="font-serif text-base sm:text-lg text-foreground font-light truncate">{service.title}</h3>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-0.5">
-                        <span className="text-xs text-gold font-mono tracking-wide">/{service.slug}</span>
+                        <span className="text-xs text-accent font-mono tracking-wide">/{service.slug}</span>
                         <span className="text-[10px] text-gray-500 font-light">
                           Created: {service.created_at ? new Date(service.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
                         </span>
@@ -908,30 +908,38 @@ export default function AdminServicesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={() => startEditing(service)}
-                      className="p-2.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] text-gray-400 hover:text-white transition-colors"
-                      title="Edit Service"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteService(service)}
-                      className="p-2.5 rounded-xl border border-red-500/10 bg-red-500/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
-                      title="Delete Service"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="text-gray-500 ml-1">
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  <div 
+                    className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto shrink-0 border-t border-border/5 pt-3 sm:border-0 sm:pt-0" 
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center gap-3 ml-auto sm:ml-0">
+                      <button
+                        onClick={() => startEditing(service)}
+                        className="p-2.5 rounded-xl border border-border/5 bg-background/[0.02] hover:bg-background/[0.06] text-gray-400 hover:text-foreground transition-colors cursor-pointer"
+                        title="Edit Service"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteService(service)}
+                        className="p-2.5 rounded-xl border border-red-500/10 bg-red-500/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+                        title="Delete Service"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <div 
+                        className="text-gray-500 ml-1 cursor-pointer"
+                        onClick={() => setExpandedServiceId(isExpanded ? null : service.id)}
+                      >
+                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Accordion Expanded Content */}
                 {isExpanded && (
-                  <div className="px-6 pb-6 pt-2 border-t border-white/5 flex flex-col gap-6 bg-white/[0.005]">
+                  <div className="px-6 pb-6 pt-2 border-t border-border/5 flex flex-col gap-6 bg-background/[0.005]">
                     {/* Short Description */}
                     <div className="flex flex-col gap-1.5">
                       <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold flex items-center gap-1">
@@ -950,14 +958,14 @@ export default function AdminServicesPage() {
 
                     {/* Deliverables Features */}
                     <div className="flex flex-col gap-2.5">
-                      <span className="text-[10px] uppercase tracking-widest text-gold font-semibold flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-gold" /> Included Deliverables
+                      <span className="text-[10px] uppercase tracking-widest text-accent font-semibold flex items-center gap-1">
+                        <Sparkles className="w-3.5 h-3.5 text-accent" /> Included Deliverables
                       </span>
                       {service.features && service.features.length > 0 ? (
                         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-400 font-light">
                           {service.features.map((feat, idx) => (
                             <li key={idx} className="flex items-start gap-2">
-                              <Check className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+                              <Check className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                               <span>{feat}</span>
                             </li>
                           ))}
@@ -972,8 +980,8 @@ export default function AdminServicesPage() {
             );
           })
         ) : (
-          <div className="glass rounded-2xl border border-white/5 p-12 text-center flex flex-col items-center justify-center gap-4 bg-[#0e0e11]">
-            <div className="w-12 h-12 rounded-full bg-white/[0.02] flex items-center justify-center text-gray-600">
+          <div className="glass rounded-2xl border border-border/5 p-12 text-center flex flex-col items-center justify-center gap-4 bg-[#0e0e11]">
+            <div className="w-12 h-12 rounded-full bg-background/[0.02] flex items-center justify-center text-gray-600">
               <Briefcase className="w-6 h-6" />
             </div>
             <div>
