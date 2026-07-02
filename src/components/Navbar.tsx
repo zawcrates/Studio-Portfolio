@@ -188,7 +188,7 @@ export default function Navbar() {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="hidden md:flex fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80 h-32 w-64 overflow-hidden items-center justify-start"
+            className="hidden md:flex fixed top-[10px] left-[0px] sm:top-[5px] sm:left-[5px] lg:top-[0px] lg:left-[30px] z-50 select-none transition-opacity duration-500 hover:opacity-80 h-32 w-24 overflow-hidden items-center justify-start"
           >
             <Image
               src="/Varnam_svg3.png"
